@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 
 public class WorldController : MonoBehaviour {
 
@@ -21,24 +22,16 @@ public class WorldController : MonoBehaviour {
                 GameObject tile_GO = new GameObject();
                 tile_GO.name = "Tile_" + x + "," + y;
                 tile_GO.transform.position = new Vector3(tile_data.X, tile_data.Y, 0);
+                tile_GO.transform.SetParent(this.transform, true);
 
                 //add a sprite renderer, but keep it empty for now
                 tile_GO.AddComponent<SpriteRenderer>();
-                
+
+                tile_data.RegisterTileTypeChangedCallback((tile) => { OnTileTypeChanged(tile, tile_GO); } );
             }
         }
         world.RandomizeTiles();
     }
-        float randomizeTileTimer = 2f;
-
-    void Update(){
-        randomizeTileTimer -= Time.deltaTime;
-        if(randomizeTileTimer < 0)
-        {
-            world.RandomizeTiles();
-            randomizeTileTimer = 2;
-        }
-	}
 
     void OnTileTypeChanged(Tile tile_data, GameObject tile_GO)
     {

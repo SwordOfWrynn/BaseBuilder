@@ -1,23 +1,33 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class Tile {
 
+    //TileType is base type of the tile, to tell if it's
+    //part of the station or empty space
     public enum TileType { Empty, Floor };
 
-    TileType type = TileType.Empty;
+    TileType _type = TileType.Empty;
+
+    Action<Tile> cbTileTypeChanged;
 
     public TileType Type
     {
         get
         {
-            return type;
+            return _type;
         }
         set
         {
-            type = value;
+            TileType oldType = _type;
+            _type = value;
             //Call the callback to let things know type has changed
+            if (cbTileTypeChanged != null && _type != oldType)
+            {
+                cbTileTypeChanged(this);
+            }
         }
     }
 
@@ -49,5 +59,14 @@ public class Tile {
         this.world = world;
         this.x = x;
         this.y = y;
+    }
+
+    public void RegisterTileTypeChangedCallback(Action<Tile> callback)
+    {
+        cbTileTypeChanged += callback;
+    }
+    public void UnRegisterTileTypeChangedCallback(Action<Tile> callback)
+    {
+        cbTileTypeChanged -= callback;
     }
 }
