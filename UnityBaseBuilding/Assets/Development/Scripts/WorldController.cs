@@ -2,22 +2,30 @@
 using System;
 
 public class WorldController : MonoBehaviour {
+    
+    public static WorldController Instance { get; protected set; }
 
     public Sprite floorSprite;
 
 
-    World world;
+    public World World { get; protected set; }
 
     void Start() {
+        if(Instance != null)
+        {
+            Debug.LogError("There is more than one WorldController!");
+        }
+        Instance = this;
+
         //create a world with empty tiles
-        world = new World();
+        World = new World();
 
         //create a Gameobject for each tile to show visuals
-        for (int x = 0; x < world.Width; x++)
+        for (int x = 0; x < World.Width; x++)
         {
-            for (int y = 0; y < world.Height; y++)
+            for (int y = 0; y < World.Height; y++)
             {
-                Tile tile_data = world.GetTileAt(x, y);
+                Tile tile_data = World.GetTileAt(x, y);
 
                 GameObject tile_GO = new GameObject();
                 tile_GO.name = "Tile_" + x + "," + y;
@@ -30,7 +38,7 @@ public class WorldController : MonoBehaviour {
                 tile_data.RegisterTileTypeChangedCallback((tile) => { OnTileTypeChanged(tile, tile_GO); } );
             }
         }
-        world.RandomizeTiles();
+        World.RandomizeTiles();
     }
 
     void OnTileTypeChanged(Tile tile_data, GameObject tile_GO)
