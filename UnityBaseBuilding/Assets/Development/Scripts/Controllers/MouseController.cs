@@ -13,6 +13,7 @@ public class MouseController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         dragPreviewGameObjects = new List<GameObject>();
+        
 	}
 	
 	// Update is called once per frame
@@ -51,6 +52,7 @@ public class MouseController : MonoBehaviour {
     {
         //handle left mouse
         //start drag
+        //for mobile have sense tapping, tap start tap end
         if (Input.GetMouseButtonDown(0))
         {
             dragStartPos = currentFramePos;
@@ -77,7 +79,7 @@ public class MouseController : MonoBehaviour {
         {
             GameObject go = dragPreviewGameObjects[0];
             dragPreviewGameObjects.RemoveAt(0);
-            Destroy(go);
+            SimplePool.Despawn(go);
         }
 
         if (Input.GetMouseButton(0))
@@ -91,7 +93,8 @@ public class MouseController : MonoBehaviour {
                     if (t != null)
                     {
                         //display building hint at this position
-                        GameObject go = Instantiate(circleCursorPrefab, new Vector3(x, y, 0), Quaternion.identity);
+                        GameObject go = SimplePool.Spawn(circleCursorPrefab, new Vector3(x, y, 0), Quaternion.identity);
+                        go.transform.SetParent(transform, true);
                         dragPreviewGameObjects.Add(go);
                     }
                 }
@@ -125,6 +128,8 @@ public class MouseController : MonoBehaviour {
             Vector3 diff = lastFramePos - currentFramePos;
             Camera.main.transform.Translate(diff);
         }
+        Camera.main.orthographicSize -= Camera.main.orthographicSize * Input.GetAxis("Mouse ScrollWheel");
+        Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, 3f, 25f );
     }
 
 }
