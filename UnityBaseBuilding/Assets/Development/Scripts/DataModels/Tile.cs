@@ -37,28 +37,14 @@ public class Tile {
 
     World world;
     int x;
-    public int Y
-    {
-        get
-        {
-            return y;
-        }
-    }
-
-    int y;
-    public int X
-    {
-        get
-        {
-            return x;
-        }
-    }
+    public int X { get; protected set; }
+    public int Y { get; protected set; }
 
     public Tile( World world, int x, int y )
     {
         this.world = world;
-        this.x = x;
-        this.y = y;
+        X = x;
+        Y = y;
     }
 
     public void RegisterTileTypeChangedCallback(Action<Tile> callback)
