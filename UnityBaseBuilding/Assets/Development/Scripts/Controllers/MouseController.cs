@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class MouseController : MonoBehaviour {
 
     public GameObject circleCursorPrefab;
+    Tile.TileType buildModeTile = Tile.TileType.Floor;
     Vector3 currentFramePos;
     Vector3 lastFramePos;
     Vector3 dragStartPos;
@@ -50,6 +52,11 @@ public class MouseController : MonoBehaviour {
 
     void UpdateDragging()
     {
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
+        
         //handle left mouse
         //start drag
         //for mobile have sense tapping, tap start tap end
@@ -113,7 +120,7 @@ public class MouseController : MonoBehaviour {
                     Tile t = WorldController.Instance.World.GetTileAt(x, y);
                     if (t != null)
                     {
-                        t.Type = Tile.TileType.Floor;
+                        t.Type = buildModeTile;
                     }
                 }
             }
@@ -130,6 +137,16 @@ public class MouseController : MonoBehaviour {
         }
         Camera.main.orthographicSize -= Camera.main.orthographicSize * Input.GetAxis("Mouse ScrollWheel");
         Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, 3f, 25f );
+    }
+
+    public void SetMode_BuildFloor()
+    {
+        buildModeTile = Tile.TileType.Floor;
+    }
+
+    public void SetMode_Destroy()
+    {
+        buildModeTile = Tile.TileType.Empty;
     }
 
 }
