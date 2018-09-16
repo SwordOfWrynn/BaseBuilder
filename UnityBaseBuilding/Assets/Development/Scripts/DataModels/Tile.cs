@@ -3,11 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+
+    //TileType is base type of the tile, to tell if it's part of the 
+    //station or empty space or some other tile type
+    //It is outside the class so it can be used everywhere and not 
+    //needing a reference to the Tile class
+    public enum TileType { Empty, Floor };
+
 public class Tile {
 
-    //TileType is base type of the tile, to tell if it's
-    //part of the station or empty space
-    public enum TileType { Empty, Floor };
+
 
     TileType _type = TileType.Empty;
 
@@ -36,7 +41,6 @@ public class Tile {
     InstalledObject installedObject;
 
     World world;
-    int x;
     public int X { get; protected set; }
     public int Y { get; protected set; }
 

@@ -6,7 +6,10 @@ using UnityEngine.EventSystems;
 public class MouseController : MonoBehaviour {
 
     public GameObject circleCursorPrefab;
-    Tile.TileType buildModeTile = Tile.TileType.Floor;
+
+    bool buildModeIsObjects = false;
+
+    TileType buildModeTile = TileType.Floor;
     Vector3 currentFramePos;
     Vector3 lastFramePos;
     Vector3 dragStartPos;
@@ -118,9 +121,21 @@ public class MouseController : MonoBehaviour {
                 for (int y = start_y; y <= end_y; y++)
                 {
                     Tile t = WorldController.Instance.World.GetTileAt(x, y);
+                    
                     if (t != null)
                     {
-                        t.Type = buildModeTile;
+                        if (buildModeIsObjects)
+                        {
+                            //We are installing objects
+                            //Create the Installed object and assign it to the tile
+
+
+                        }
+                        else
+                        {
+                            //We are changing tile types
+                            t.Type = buildModeTile;
+                        }
                     }
                 }
             }
@@ -141,12 +156,19 @@ public class MouseController : MonoBehaviour {
 
     public void SetMode_BuildFloor()
     {
-        buildModeTile = Tile.TileType.Floor;
+        buildModeIsObjects = false;
+        buildModeTile = TileType.Floor;
     }
 
     public void SetMode_Destroy()
     {
-        buildModeTile = Tile.TileType.Empty;
+        buildModeIsObjects = false;
+        buildModeTile = TileType.Empty;
+    }
+    //Wall is not a Tile, it is an InstalledObject
+    public void SetMode_BuildWall()
+    {
+        buildModeIsObjects = true;
     }
 
 }
