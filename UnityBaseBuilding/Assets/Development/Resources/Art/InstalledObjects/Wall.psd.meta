@@ -249,7 +249,7 @@ TextureImporter:
       name: Wall_E
       rect:
         serializedVersion: 2
-        x: 225
+        x: 224
         y: 192
         width: 32
         height: 32
@@ -281,7 +281,7 @@ TextureImporter:
         y: 192
         width: 32
         height: 32
-      alignment: 0
+      alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []

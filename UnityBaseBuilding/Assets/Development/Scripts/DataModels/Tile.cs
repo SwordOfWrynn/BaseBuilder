@@ -37,8 +37,8 @@ public class Tile {
     }
 
 
-    LooseObject looseObject;
-    InstalledObject installedObject;
+    Inventory inventory;
+    public InstalledObject InstalledObject { get; protected set; }
 
     World world;
     public int X { get; protected set; }
@@ -59,4 +59,25 @@ public class Tile {
     {
         cbTileTypeChanged -= callback;
     }
+    //takes in an instance of an InstalledObject, not a prototype
+    public bool PlaceObject(InstalledObject _objInstance)
+    {
+        if(_objInstance == null)
+        {
+            //we are uninstalling whatever was here
+            InstalledObject = null;
+            return true;
+        }
+        //Now objInstance is not null
+        if(InstalledObject != null)
+        {
+            Debug.LogError("Trying to assign an installed object to a tile that already has one!");
+            return false;
+        }
+
+        //At this point everything should be fine
+        InstalledObject = _objInstance;
+        return true;
+    }
+
 }
