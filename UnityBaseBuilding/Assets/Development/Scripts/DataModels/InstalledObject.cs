@@ -69,6 +69,39 @@ public class InstalledObject {
         {
             //this type of InstalledObject links to neighbors so we need to inform its new neighbors when it is made
 
+            Tile t;
+
+            int x = obj.Tile.X;
+            int y = obj.Tile.Y;
+
+            t = obj.Tile.World.GetTileAt(x, y + 1);
+            //if there is a tile above us, it has an object on it, and that object matches ours
+            if (t != null && t.InstalledObject != null && t.InstalledObject.ObjectType == obj.ObjectType)
+            {
+                t.InstalledObject.cbOnChanged(t.InstalledObject);
+            }
+
+            t = obj.Tile.World.GetTileAt(x + 1, y);
+            //if there is a tile to the right, it has an object on it, and that object matches ours
+            if (t != null && t.InstalledObject != null && t.InstalledObject.ObjectType == obj.ObjectType)
+            {
+                t.InstalledObject.cbOnChanged(t.InstalledObject);
+            }
+
+            t = obj.Tile.World.GetTileAt(x, y - 1);
+            //if there is a tile below us, it has an object on it, and that object matches ours
+            if (t != null && t.InstalledObject != null && t.InstalledObject.ObjectType == obj.ObjectType)
+            {
+                t.InstalledObject.cbOnChanged(t.InstalledObject);
+            }
+
+            t = obj.Tile.World.GetTileAt(x - 1, y);
+            //if there is a tile to the left, it has an object on it, and that object matches ours
+            if (t != null && t.InstalledObject != null && t.InstalledObject.ObjectType == obj.ObjectType)
+            {
+                t.InstalledObject.cbOnChanged(t.InstalledObject);
+            }
+
         }
 
         return obj;

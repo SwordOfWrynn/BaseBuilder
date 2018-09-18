@@ -24,14 +24,7 @@ public class WorldController : MonoBehaviour {
         }
         Instance = this;
 
-        installedObjectSprites = new Dictionary<string, Sprite>();
-        Sprite[] sprites = Resources.LoadAll<Sprite>("Art/InstalledObjects/");
-
-        foreach(Sprite s in sprites)
-        {
-            Debug.Log(s);
-            installedObjectSprites[s.name] = s;
-        }
+        LoadSpritesFromResources();
 
         //create a world with empty tiles
         World = new World();
@@ -79,6 +72,18 @@ public class WorldController : MonoBehaviour {
             tile_data.UnRegisterTileTypeChangedCallback(OnTileTypeChanged);
             //Destroy the GameObject
             Destroy(tile_GO);
+        }
+    }
+
+    void LoadSpritesFromResources()
+    {
+        installedObjectSprites = new Dictionary<string, Sprite>();
+        Sprite[] sprites = Resources.LoadAll<Sprite>("Art/InstalledObjects/");
+
+        foreach (Sprite s in sprites)
+        {
+            Debug.Log(s);
+            installedObjectSprites[s.name] = s;
         }
     }
 
@@ -151,7 +156,6 @@ public class WorldController : MonoBehaviour {
 
         GameObject obj_GO = installedObjectGameObjectMap[_obj];
         obj_GO.GetComponent<SpriteRenderer>().sprite = GetSpriteForInstalledObject(_obj);
-        
     }
 
     Sprite GetSpriteForInstalledObject(InstalledObject _obj)

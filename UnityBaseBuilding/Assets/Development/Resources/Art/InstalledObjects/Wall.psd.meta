@@ -2,7 +2,7 @@ fileFormatVersion: 2
 guid: 65b63957c01df484bb5117cfefeb2abd
 TextureImporter:
   fileIDToRecycleName:
-    21300000: Wall_SE
+    21300000: Wall_ES
     21300002: Wall_EW
     21300004: Wall_SW
     21300006: Wall_NS
@@ -106,7 +106,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Wall_SE
+      name: Wall_ES
       rect:
         serializedVersion: 2
         x: 0

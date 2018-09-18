@@ -40,13 +40,13 @@ public class Tile {
     Inventory inventory;
     public InstalledObject InstalledObject { get; protected set; }
 
-    World world;
+    public World World {get; protected set;}
     public int X { get; protected set; }
     public int Y { get; protected set; }
 
     public Tile( World world, int x, int y )
     {
-        this.world = world;
+        World = world;
         X = x;
         Y = y;
     }
