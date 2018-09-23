@@ -26,6 +26,8 @@ public class InstalledObject {
     public bool LinksToNeighbour { get; protected set; }
 
     Action<InstalledObject> cbOnChanged;
+    //Func is like an action, but will return something, in this case a boolean
+    Func<Tile, bool> funcPositionValidation;
 
     protected InstalledObject()
     {
@@ -42,11 +44,20 @@ public class InstalledObject {
         obj.height = _height;
         obj.LinksToNeighbour = _linksToNeighbour;
 
+        obj.funcPositionValidation = obj.IsValidPosition;
+        
         return obj;
     }
     //takes the prototype and a tile and creates the actual object
     static public InstalledObject PlaceInstance (InstalledObject _proto, Tile _tile)
     {
+        if(_proto.funcPositionValidation(_tile) == false)
+        {
+            Debug.LogError("PlaceInstance -- Position Validity function returned FALSE.");
+            return null;
+        }
+        //We now know that the placement is valid
+
         InstalledObject obj = new InstalledObject();
 
         obj.ObjectType = _proto.ObjectType;
@@ -116,4 +127,30 @@ public class InstalledObject {
         cbOnChanged -= callbackFunction;
     }
 
+    public bool IsValidPosition(Tile _tile)
+    {
+        //make sure tile is floor
+        if(_tile.Type != TileType.Floor)
+        {
+            return false;
+        }
+        //Make sure the tile doesn't already have an InstalledObject on it
+        if(_tile.InstalledObject != null)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    public bool IsValidPosition_Door(Tile _tile)
+    {
+        if (IsValidPosition(_tile) == false)
+        {
+            return false;
+        }
+        //make sure there is a pair off E/W walls, or N/S walls
+
+        return true;
+    }
 }
