@@ -15,8 +15,8 @@ public class Tile {
 
 
     TileType _type = TileType.Empty;
-
-    Action<Tile> cbTileTypeChanged;
+    //the function(s) we callback any time our tile data changes
+    Action<Tile> cbTileChanged;
 
     public TileType Type
     {
@@ -29,9 +29,9 @@ public class Tile {
             TileType oldType = _type;
             _type = value;
             //Call the callback to let things know type has changed
-            if (cbTileTypeChanged != null && _type != oldType)
+            if (cbTileChanged != null && _type != oldType)
             {
-                cbTileTypeChanged(this);
+                cbTileChanged(this);
             }
         }
     }
@@ -53,11 +53,11 @@ public class Tile {
 
     public void RegisterTileTypeChangedCallback(Action<Tile> callback)
     {
-        cbTileTypeChanged += callback;
+        cbTileChanged += callback;
     }
     public void UnRegisterTileTypeChangedCallback(Action<Tile> callback)
     {
-        cbTileTypeChanged -= callback;
+        cbTileChanged -= callback;
     }
     //takes in an instance of an InstalledObject, not a prototype
     public bool PlaceObject(InstalledObject _objInstance)

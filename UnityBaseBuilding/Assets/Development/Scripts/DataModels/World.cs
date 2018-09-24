@@ -11,8 +11,9 @@ public class World
     public int Width { get; protected set; }
 
     public int Height { get; protected set; }
-
+    //a list of functions to be called on InstalledObject creation
     Action<InstalledObject> cbInstalledObjectCreated;
+    Action<Tile> cbTileChanged;
 
     public World(int _width = 100, int _height = 100)
     {
@@ -26,6 +27,7 @@ public class World
             for (int y = 0; y < _height; y++)
             {
                 tiles[x, y] = new Tile(this, x, y);
+                tiles[x, y].RegisterTileTypeChangedCallback(OnTileChanged);
             }
         }
         Debug.Log("World created with " + (_width * _height) + " tiles");
@@ -95,5 +97,22 @@ public class World
     public void UnRegisterInstalledObjectCreated(Action<InstalledObject> _callbackFunction)
     {
         cbInstalledObjectCreated -= _callbackFunction;
+    }
+    public void RegisterTileChanged(Action<Tile> _callbackFunction)
+    {
+        cbTileChanged += _callbackFunction;
+    }
+    public void UnRegisterTileChanged(Action<Tile> _callbackFunction)
+    {
+        cbTileChanged -= _callbackFunction;
+    }
+    void OnTileChanged(Tile _t)
+    {
+        if (cbTileChanged == null)
+        {
+            return;
+        }
+
+        cbTileChanged(_t);
     }
 }
