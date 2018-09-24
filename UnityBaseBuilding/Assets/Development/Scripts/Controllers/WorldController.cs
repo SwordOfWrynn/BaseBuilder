@@ -6,6 +6,7 @@ public class WorldController : MonoBehaviour {
     
     public static WorldController Instance { get; protected set; }
 
+    public Sprite emptySprite;
     public Sprite floorSprite;
 
     //Keep track of Tiles and their GameObjects
@@ -17,7 +18,7 @@ public class WorldController : MonoBehaviour {
 
     public World World { get; protected set; }
 
-    void Start() {
+    void Awake() {
         if(Instance != null)
         {
             Debug.LogError("There is more than one WorldController!");
@@ -48,15 +49,21 @@ public class WorldController : MonoBehaviour {
                 tile_GO.transform.position = new Vector3(tile_data.X, tile_data.Y, 0);
                 tile_GO.transform.SetParent(transform, true);
 
-                //add a sprite renderer, but keep it empty for now
-                tile_GO.AddComponent<SpriteRenderer>();
+                //add a sprite renderer
+                tile_GO.AddComponent<SpriteRenderer>().sprite = emptySprite;
 
                 //register callback so our GameObject gets updated
-                //this tells the Tile the function it should run (OnTileTypeChanged) when it's Type changed
-                tile_data.RegisterTileTypeChangedCallback(OnTileTypeChanged);
+                //this tells the Tile the function it should run (OnTileChanged) when it's Type changed
+
             }
         }
-        World.RandomizeTiles();
+        World.RegisterTileChanged(OnTileChanged);
+
+        //Center the camera
+        Camera.main.transform.position = new Vector3(World.Width / 2, World.Height / 2, -10);
+
+
+        //World.RandomizeTiles();
     }
     //Example
     void DestroyAllTileGameObjects()
@@ -69,7 +76,7 @@ public class WorldController : MonoBehaviour {
             //remove the pait from dictionary
             tileGameObjectMap.Remove(tile_data);
             //unregister the callback
-            tile_data.UnRegisterTileTypeChangedCallback(OnTileTypeChanged);
+            tile_data.UnRegisterTileTypeChangedCallback(OnTileChanged);
             //Destroy the GameObject
             Destroy(tile_GO);
         }
@@ -82,12 +89,11 @@ public class WorldController : MonoBehaviour {
 
         foreach (Sprite s in sprites)
         {
-            Debug.Log(s);
             installedObjectSprites[s.name] = s;
         }
     }
-
-    void OnTileTypeChanged(Tile tile_data)
+    //should be called whenever a tile's data is changed
+    void OnTileChanged(Tile tile_data)
     {
 
         if(!tileGameObjectMap.ContainsKey(tile_data))
@@ -110,7 +116,7 @@ public class WorldController : MonoBehaviour {
         }
         else if (tile_data.Type == TileType.Empty)
         {
-            tile_GO.GetComponent<SpriteRenderer>().sprite = null;
+            tile_GO.GetComponent<SpriteRenderer>().sprite = emptySprite;
         }
         else
         {

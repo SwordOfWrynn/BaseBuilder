@@ -1,6 +1,10 @@
 Based on this tutorial https://www.youtube.com/playlist?list=PLbghT7MmckI4_VM5q3va043FgAwRim6yX
 
+<<<<<<< HEAD
 Time spent = ~ 3 hrs a week
 
 9/16/18- 1 hour
 9/18/18 - 1 hour
+=======
+9/23/2018 - 2.5 hour
+>>>>>>> 128f5b4b7e95ea09288e584f5953229b3d86c4b8
