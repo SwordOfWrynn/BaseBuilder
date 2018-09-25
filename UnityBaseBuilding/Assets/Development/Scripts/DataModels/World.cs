@@ -6,6 +6,7 @@ public class World
 {
     Tile[,] tiles;
 
+    //when we pass this a string it will give the corresponding InstalledObject, or visa-versa
     Dictionary<string, InstalledObject> installedObjectPrototypes;
 
     public int Width { get; protected set; }
@@ -15,11 +16,11 @@ public class World
     Action<InstalledObject> cbInstalledObjectCreated;
     Action<Tile> cbTileChanged;
 
-    public Queue<Job> jobQueue;
+    public JobQueue jobQueue;
 
     public World(int _width = 100, int _height = 100)
     {
-        jobQueue = new Queue<Job>();
+        jobQueue = new JobQueue();
 
         Width = _width;
         Height = _height;
@@ -122,6 +123,17 @@ public class World
     public bool IsInstalledObjectPlacementValid(string InstalledObjectType, Tile t)
     {
         return installedObjectPrototypes[InstalledObjectType].IsValidPosition(t);
+    }
+
+    public InstalledObject GetInstalledObjectPrototype(string _objectType)
+    {
+        if(installedObjectPrototypes.ContainsKey(_objectType) == false)
+        {
+            Debug.LogError("No InstalledObject of type " + _objectType + " is in the InstalledObjectPrototypes dictionary!");
+            return null;
+        }
+
+        return installedObjectPrototypes[_objectType];
     }
 
 }

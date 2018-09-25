@@ -30,26 +30,26 @@ public class BuildModeController : MonoBehaviour {
             //WorldController.Instance.World.PlaceInstalledObject(buildModeObjectType, t);
 
             //Can we build it at the tile (there isn't already something on it, or going to be build on it)
-            string InstalledObjectType = buildModeObjectType;
+            string installedObjectType = buildModeObjectType;
 
-            if (WorldController.Instance.world.IsInstalledObjectPlacementValid(InstalledObjectType, _t) && _t.pendingInstalledObjectJob == null)
+            if (WorldController.Instance.world.IsInstalledObjectPlacementValid(installedObjectType, _t) && _t.pendingInstalledObjectJob == null)
             {
 
-                //this uses a lambda(_t, (theJob) => { WorldController.Instance.World.PlaceInstalledObject(buildModeObjectType, theJob.Tile);})
+                //this uses a lambda(_t, installedObjectType, "(theJob) => { WorldController.Instance.World.PlaceInstalledObject(buildModeObjectType, theJob.Tile);})"
                 //it is a mini function used for the Job callback (because the callback wants an Action<Job>), and it call the PlaceInstalledObject function
 
-                Job j = new Job(_t, (theJob) =>
+                Job j = new Job(_t, installedObjectType, (theJob) =>
                 {
-                    WorldController.Instance.world.PlaceInstalledObject(InstalledObjectType, theJob.Tile);
+                    WorldController.Instance.world.PlaceInstalledObject(installedObjectType, theJob.Tile);
                     _t.pendingInstalledObjectJob = null;
                 }
                 );
 
                 _t.pendingInstalledObjectJob = j;
                 j.RegisterJobCancelCallback((theJob) => { theJob.Tile.pendingInstalledObjectJob = null; });
+
                 //Queue up the job
                 WorldController.Instance.world.jobQueue.Enqueue(j);
-                Debug.Log("Job Queue Size: " + WorldController.Instance.world.jobQueue.Count);
             }
         }
         else

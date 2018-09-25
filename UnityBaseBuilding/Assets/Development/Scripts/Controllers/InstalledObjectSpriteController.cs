@@ -63,7 +63,7 @@ public class InstalledObjectSpriteController : MonoBehaviour {
         obj_GO.GetComponent<SpriteRenderer>().sprite = GetSpriteForInstalledObject(_obj);
     }
 
-    Sprite GetSpriteForInstalledObject(InstalledObject _obj)
+    public Sprite GetSpriteForInstalledObject(InstalledObject _obj)
     {
         if (_obj.LinksToNeighbour == false)
         {

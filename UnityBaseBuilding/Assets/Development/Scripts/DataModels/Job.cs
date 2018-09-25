@@ -10,13 +10,16 @@ public class Job {
     public Tile Tile { get; protected set; }
     float jobTime;
 
+    public string jobObjectType { get; protected set; }
+
     Action<Job> cbJobComplete;
     Action<Job> cbJobCancelled;
     
-    public Job(Tile _tile, Action<Job> _cbJobComplete, float _jobTime = 1f)
+    public Job(Tile _tile, string _jobObjectType, Action<Job> _cbJobComplete, float _jobTime = 1f)
     {
         Tile = _tile;
         cbJobComplete += _cbJobComplete;
+        jobObjectType = _jobObjectType;
     }
 
     public void RegisterJobCompleteCallback(Action<Job> _cb)
