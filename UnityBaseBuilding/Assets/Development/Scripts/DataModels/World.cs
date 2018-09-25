@@ -15,8 +15,12 @@ public class World
     Action<InstalledObject> cbInstalledObjectCreated;
     Action<Tile> cbTileChanged;
 
+    public Queue<Job> jobQueue;
+
     public World(int _width = 100, int _height = 100)
     {
+        jobQueue = new Queue<Job>();
+
         Width = _width;
         Height = _height;
  
@@ -115,4 +119,9 @@ public class World
 
         cbTileChanged(_t);
     }
+    public bool IsInstalledObjectPlacementValid(string InstalledObjectType, Tile t)
+    {
+        return installedObjectPrototypes[InstalledObjectType].IsValidPosition(t);
+    }
+
 }

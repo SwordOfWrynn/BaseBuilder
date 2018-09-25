@@ -129,9 +129,31 @@ public class MouseController : MonoBehaviour {
                         if (buildModeIsObjects)
                         {
                             //We are installing objects
-                            //Create the Installed object and assign it to the tile
-                            WorldController.Instance.World.PlaceInstalledObject(buildModeObjectType, t);
+                            //Create the Installed object instantly and assign it to the tile
+                            //WorldController.Instance.World.PlaceInstalledObject(buildModeObjectType, t);
 
+                            //Can we build it at the tile (there isn't already something on it, or going to be build on it)
+                            string InstalledObjectType = buildModeObjectType;
+                             
+                            if (WorldController.Instance.World.IsInstalledObjectPlacementValid(InstalledObjectType, t) && t.pendingInstalledObjectJob == null)
+                            {
+
+                                //this uses a lambda(t, (theJob) => { WorldController.Instance.World.PlaceInstalledObject(buildModeObjectType, theJob.Tile);})
+                                // theJob is a mini function used for the Job callback (because the callback wants an Action<Job>), and it call the PlaceInstalledObject function
+
+                                Job j = new Job(t, (theJob) =>
+                                {
+                                    WorldController.Instance.World.PlaceInstalledObject(InstalledObjectType, theJob.Tile);
+                                    t.pendingInstalledObjectJob = null;
+                                }
+                                );
+
+                                t.pendingInstalledObjectJob = j;
+                                j.RegisterJobCancelCallback((theJob) => { theJob.Tile.pendingInstalledObjectJob = null; });
+                                //Queue up the job
+                                WorldController.Instance.World.jobQueue.Enqueue(j);
+                                Debug.Log("Job Queue Size: " + WorldController.Instance.World.jobQueue.Count);
+                            }
                         }
                         else
                         {
@@ -143,6 +165,12 @@ public class MouseController : MonoBehaviour {
             }
         }
     }
+
+    void OnInstalledObjectJobComplete(string InstalledObjectType, Tile t)
+    {
+        WorldController.Instance.World.PlaceInstalledObject(InstalledObjectType, t);
+    }
+
 
     void UpdateCameraMovement()
     {

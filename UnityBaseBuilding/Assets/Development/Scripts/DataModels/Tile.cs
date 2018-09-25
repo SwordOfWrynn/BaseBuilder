@@ -40,6 +40,8 @@ public class Tile {
     Inventory inventory;
     public InstalledObject InstalledObject { get; protected set; }
 
+    public Job pendingInstalledObjectJob;
+
     public World World {get; protected set;}
     public int X { get; protected set; }
     public int Y { get; protected set; }

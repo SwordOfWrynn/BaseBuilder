@@ -44,7 +44,7 @@ public class InstalledObject {
         obj.height = _height;
         obj.LinksToNeighbour = _linksToNeighbour;
 
-        obj.funcPositionValidation = obj.IsValidPosition;
+        obj.funcPositionValidation = obj._IsValidPosition;
         
         return obj;
     }
@@ -127,7 +127,12 @@ public class InstalledObject {
         cbOnChanged -= callbackFunction;
     }
 
-    public bool IsValidPosition(Tile _tile)
+    public bool IsValidPosition(Tile _t)
+    {
+        return funcPositionValidation(_t);
+    }
+
+    public bool _IsValidPosition(Tile _tile)
     {
         //make sure tile is floor
         if(_tile.Type != TileType.Floor)
@@ -143,9 +148,9 @@ public class InstalledObject {
         return true;
     }
 
-    public bool IsValidPosition_Door(Tile _tile)
+    public bool _IsValidPosition_Door(Tile _tile)
     {
-        if (IsValidPosition(_tile) == false)
+        if (_IsValidPosition(_tile) == false)
         {
             return false;
         }
