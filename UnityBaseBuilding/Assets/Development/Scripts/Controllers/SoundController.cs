@@ -8,8 +8,8 @@ public class SoundController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        WorldController.Instance.World.RegisterInstalledObjectCreated(OnInstalledObjectCreated);
-        WorldController.Instance.World.RegisterTileChanged(OnTileChanged);
+        WorldController.Instance.world.RegisterInstalledObjectCreated(OnInstalledObjectCreated);
+        WorldController.Instance.world.RegisterTileChanged(OnTileChanged);
     }
 
     void Update()
