@@ -107,6 +107,7 @@ public class InstalledObjectSpriteController : MonoBehaviour {
         {
             spriteName += "W";
         }
+        #endregion
 
         //return name that matches the sprite name
         if (installedObjectSprites.ContainsKey(spriteName) == false)
@@ -115,9 +116,21 @@ public class InstalledObjectSpriteController : MonoBehaviour {
             return null;
         }
         return installedObjectSprites[spriteName];
-        #endregion
     }
 
-
+    public Sprite GetSpriteForInstalledObject(string _objectType)
+    {
+        if(installedObjectSprites.ContainsKey(_objectType))
+        {
+            return installedObjectSprites[_objectType];
+        }
+        //Will look for something like the wall which has an added underscore
+        if (installedObjectSprites.ContainsKey(_objectType + "_"))
+        {
+            return installedObjectSprites[_objectType + "_"];
+        }
+        Debug.LogError("GetSpriteForInstalledObject -- The Sprite for the" + _objectType + "object does not exist!");
+        return null;
+    }
 
 }

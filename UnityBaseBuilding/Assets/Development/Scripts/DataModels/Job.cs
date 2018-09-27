@@ -22,15 +22,6 @@ public class Job {
         jobObjectType = _jobObjectType;
     }
 
-    public void RegisterJobCompleteCallback(Action<Job> _cb)
-    {
-        cbJobComplete += _cb;
-    }
-    public void RegisterJobCancelCallback(Action<Job> _cb)
-    {
-        cbJobCancelled += _cb;
-    }
-
     public void DoWork(float _workTime)
     {
         jobTime -= _workTime;
@@ -50,6 +41,24 @@ public class Job {
         {
             cbJobCancelled(this);
         }
+    }
+
+    public void RegisterJobCompleteCallback(Action<Job> _cb)
+    {
+        cbJobComplete += _cb;
+    }
+    public void RegisterJobCancelCallback(Action<Job> _cb)
+    {
+        cbJobCancelled += _cb;
+    }
+
+    public void UnregisterJobCompleteCallback(Action<Job> _cb)
+    {
+        cbJobComplete -= _cb;
+    }
+    public void UnregisterJobCancelCallback(Action<Job> _cb)
+    {
+        cbJobCancelled -= _cb;
     }
 
 }
