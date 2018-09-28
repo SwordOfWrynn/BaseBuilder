@@ -792,7 +792,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7a95ea03dfecdf4d8fc712dc3772b49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  circleCursorPrefab: {fileID: 1263770813980356, guid: 5160e1746fa581c42b4aba30efeb9274,
+  circleCursorPrefab: {fileID: 1920065024807706, guid: 4f63948708f1a314da7bef3268f2e820,
     type: 2}
 --- !u!1 &1537616207
 GameObject:
