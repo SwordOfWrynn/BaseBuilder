@@ -6,6 +6,8 @@ public class World
 {
     Tile[,] tiles;
 
+    List<Character> characters;
+
     //when we pass this a string it will give the corresponding InstalledObject, or visa-versa
     Dictionary<string, InstalledObject> installedObjectPrototypes;
 
@@ -36,7 +38,11 @@ public class World
             }
         }
         Debug.Log("World created with " + (_width * _height) + " tiles");
+
         CreateInstalledObjectPrototypes();
+
+        characters = new List<Character>();
+        Character c = new Character(tiles[ Width/2, Height/2]);
     }
     
     protected void CreateInstalledObjectPrototypes()
