@@ -34,7 +34,9 @@ public class TileSpriteController : MonoBehaviour {
                 tile_GO.transform.SetParent(transform, true);
 
                 //add a sprite renderer
-                tile_GO.AddComponent<SpriteRenderer>().sprite = emptySprite;
+                SpriteRenderer sr = tile_GO.AddComponent<SpriteRenderer>();
+                sr.sprite = emptySprite;
+                sr.sortingLayerName = "Tiles";
 
                 //register callback so our GameObject gets updated
                 //this tells the Tile the function it should run (OnTileChanged) when it's Type changed

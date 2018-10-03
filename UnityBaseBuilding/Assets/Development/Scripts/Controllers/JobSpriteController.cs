@@ -29,7 +29,7 @@ public class JobSpriteController : MonoBehaviour {
         //add a sprite renderer
         SpriteRenderer sr = job_GO.AddComponent<SpriteRenderer>();
         sr.sprite = installedObjectSpriteController.GetSpriteForInstalledObject(_j.jobObjectType);
-        sr.sortingLayerName = "JobLayer";
+        sr.sortingLayerName = "Jobs";
         //keep the green the same, but reduce the other colors and change the alpha to 25% to add transparency,
         sr.color = new Color(0.5f, 1f, 0.5f, 0.25f);
 

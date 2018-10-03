@@ -41,10 +41,16 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Tiles
+    uniqueID: 3708540107
+    locked: 0
   - name: InstalledObjects
     uniqueID: 2678358963
     locked: 0
-  - name: JobLayer
+  - name: Characters
+    uniqueID: 985961611
+    locked: 0
+  - name: Jobs
     uniqueID: 1585786137
     locked: 0
   - name: TileUI

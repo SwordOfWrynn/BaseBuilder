@@ -16,6 +16,7 @@ public class World
     public int Height { get; protected set; }
     //a list of functions to be called on InstalledObject creation
     Action<InstalledObject> cbInstalledObjectCreated;
+    Action<Character> cbCharacterCreated;
     Action<Tile> cbTileChanged;
 
     public JobQueue jobQueue;
@@ -42,9 +43,29 @@ public class World
         CreateInstalledObjectPrototypes();
 
         characters = new List<Character>();
-        Character c = new Character(tiles[ Width/2, Height/2]);
+        
+    }
+
+    public void Update(float _deltaTime)
+    {
+        foreach(Character c in characters)
+        {
+            c.Update(_deltaTime);
+        }
     }
     
+    public Character CreateCharacter(Tile _tile)
+    {
+        Character c = new Character(_tile);
+
+        characters.Add(c);
+
+        if(cbCharacterCreated != null)
+            cbCharacterCreated(c);
+
+        return c;
+    }
+
     protected void CreateInstalledObjectPrototypes()
     {
         installedObjectPrototypes = new Dictionary<string, InstalledObject>();
@@ -108,6 +129,14 @@ public class World
     public void UnRegisterInstalledObjectCreated(Action<InstalledObject> _callbackFunction)
     {
         cbInstalledObjectCreated -= _callbackFunction;
+    }
+    public void RegisterCharacterCreated(Action<Character> _callbackFunction)
+    {
+        cbCharacterCreated += _callbackFunction;
+    }
+    public void UnRegisterCharacterCreated(Action<Character> _callbackFunction)
+    {
+        cbCharacterCreated -= _callbackFunction;
     }
     public void RegisterTileChanged(Action<Tile> _callbackFunction)
     {

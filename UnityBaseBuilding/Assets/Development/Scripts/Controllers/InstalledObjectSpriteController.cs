@@ -44,8 +44,10 @@ public class InstalledObjectSpriteController : MonoBehaviour {
         obj_GO.transform.SetParent(transform, true);
 
         //add a sprite renderer
-        obj_GO.AddComponent<SpriteRenderer>().sprite = GetSpriteForInstalledObject(_obj);
-        obj_GO.GetComponent<SpriteRenderer>().sortingLayerName = "InstalledObjects";
+        SpriteRenderer sr = obj_GO.AddComponent<SpriteRenderer>();
+        sr.sprite = GetSpriteForInstalledObject(_obj);
+        sr.sortingLayerName = "InstalledObjects";
+
         //register callback so our GameObject gets updated
         _obj.RegisterOnChangedCallback(OnInstalledObjectChanged);
     }

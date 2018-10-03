@@ -15,16 +15,18 @@ public class CharacterSpriteController : MonoBehaviour{
 
         LoadSpritesFromResources();
 
-        characterGameObjectMap = new Dictionary<InstalledObject, GameObject>();
+        characterGameObjectMap = new Dictionary<Character, GameObject>();
 
-        world.RegisterInstalledObjectCreated(OnInstalledObjectCreated);
+        world.RegisterCharacterCreated(OnCharacterCreated);
 
+        Character c = world.CreateCharacter(world.GetTileAt(world.Width/2, world.Height/2));
+        c.SetDestination(world.GetTileAt(world.Width / 2 + 5, world.Height / 2));
     }
 
     void LoadSpritesFromResources()
     {
         characterSprites = new Dictionary<string, Sprite>();
-        Sprite[] sprites = Resources.LoadAll<Sprite>("Art/InstalledObjects/");
+        Sprite[] sprites = Resources.LoadAll<Sprite>("Art/Characters/");
 
         foreach (Sprite s in sprites)
         {
@@ -32,35 +34,39 @@ public class CharacterSpriteController : MonoBehaviour{
         }
     }
 
-    public void OnInstalledObjectCreated(InstalledObject _obj)
+    public void OnCharacterCreated(Character _character)
     {
         //create a visual GameObject linked to this data
-        GameObject obj_GO = new GameObject();
+        GameObject character_GO = new GameObject();
         //add the Object/GameObject pair to dictionary
-        characterGameObjectMap.Add(_obj, obj_GO);
+        characterGameObjectMap.Add(_character, character_GO);
 
-        obj_GO.name = _obj.ObjectType + "_" + _obj.Tile.X + "," + _obj.Tile.Y;
-        obj_GO.transform.position = new Vector3(_obj.Tile.X, _obj.Tile.Y, 0);
-        obj_GO.transform.SetParent(transform, true);
+        character_GO.name = "Character";
+        character_GO.transform.position = new Vector3(_character.X, _character.Y, 0);
+        character_GO.transform.SetParent(transform, true);
 
         //add a sprite renderer
-        obj_GO.AddComponent<SpriteRenderer>().sprite = GetSpriteForInstalledObject(_obj);
-        obj_GO.GetComponent<SpriteRenderer>().sortingLayerName = "InstalledObjects";
+        SpriteRenderer sr = character_GO.AddComponent<SpriteRenderer>();
+        sr.sprite = characterSprites["p1_front"];
+        sr.sortingLayerName = "Characters";
+
         //register callback so our GameObject gets updated
-        _obj.RegisterOnChangedCallback(OnInstalledObjectChanged);
+        _character.RegisterOnChangedCallback(OnCharacterChanged);
     }
 
-    void OnInstalledObjectChanged(InstalledObject _obj)
+    void OnCharacterChanged(Character _character)
     {
 
-        if (characterGameObjectMap.ContainsKey(_obj) == false)
+        if (characterGameObjectMap.ContainsKey(_character) == false)
         {
-            Debug.LogError("OnInstalledObjectChanged -- Trying to change a InstalledObject that is not in the map");
+            Debug.LogError("OnCharacterChanged -- Trying to change a Character that is not in the map!");
             return;
         }
 
-        GameObject obj_GO = characterGameObjectMap[_obj];
-        obj_GO.GetComponent<SpriteRenderer>().sprite = GetSpriteForInstalledObject(_obj);
+        GameObject character_GO = characterGameObjectMap[_character];
+       //character_GO.GetComponent<SpriteRenderer>().sprite = GetSpriteForInstalledObject(_character);
+
+        character_GO.transform.position = new Vector3(_character.X, _character.Y, 0);
     }
 
 }

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,11 +13,18 @@ public class Character {
         get { return Mathf.Lerp(currentTile.Y, destinationTile.Y, movementPercentage); }
     }
 
-    Tile currentTile;
+    public Tile currentTile
+    {
+        get; protected set;
+    }
     Tile destinationTile; //If we aren't moving, will equal current tile
     float movementPercentage; //goes from 0 to 1  as we move between the 2 tiles
 
     float speed = 2f; //Tiles per second
+
+    Action<Character> cbCharacterChanged;
+
+    Job myJob;
 
     public Character(Tile _tile)
     {
@@ -26,6 +33,7 @@ public class Character {
     //This will allow us to control our own time, instead of using default Update. So we can make the game run faster or slower
     public void Update(float _deltaTime)
     {
+
         //if we are already there
         if (currentTile == destinationTile)
             return;
@@ -45,6 +53,12 @@ public class Character {
             currentTile = destinationTile;
             movementPercentage = 0;
         }
+
+        if(cbCharacterChanged != null)
+        {
+            cbCharacterChanged(this);
+        }
+
     }
 
     public void SetDestination(Tile _tile)
@@ -56,6 +70,15 @@ public class Character {
 
         destinationTile = _tile;
 
+    }
+
+    public void RegisterOnChangedCallback(Action<Character> _cb)
+    {
+        cbCharacterChanged += _cb;
+    }
+    public void UnregisterOnChangedCallback(Action<Character> _cb)
+    {
+        cbCharacterChanged -= _cb;
     }
 
 }

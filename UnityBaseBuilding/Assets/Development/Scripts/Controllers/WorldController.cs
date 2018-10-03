@@ -25,6 +25,11 @@ public class WorldController : MonoBehaviour {
         
     }
 
+    void Update()
+    {
+        world.Update(Time.deltaTime);
+    }
+
     //returns the tile at the given coordinates
     public Tile GetTileAtWorldCoord(Vector3 _coord)
     {
