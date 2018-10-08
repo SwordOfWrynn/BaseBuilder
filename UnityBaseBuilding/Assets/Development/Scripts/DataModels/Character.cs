@@ -34,9 +34,38 @@ public class Character {
     public void Update(float _deltaTime)
     {
 
+        //Do I have a job?
+        if(myJob == null)
+        {
+            //Get a new job
+            myJob = currentTile.World.jobQueue.Dequeue();
+
+            //if I got a job
+            if(myJob != null)
+            {
+                destinationTile = myJob.Tile;
+
+                myJob.RegisterJobCancelCallback(OnJobEnded);
+                myJob.RegisterJobCompleteCallback(OnJobEnded);
+            }
+        }
+
+
+
+
         //if we are already there
         if (currentTile == destinationTile)
+        {
+            if(myJob != null)
+            {
+                myJob.DoWork(_deltaTime);
+            }
+
+
+
             return;
+        }
+
         //total distance from point A to point B
         float distanceToTravel = Mathf.Sqrt(Mathf.Pow(currentTile.X - destinationTile.X, 2) + Mathf.Pow(currentTile.Y - destinationTile.Y, 2));
         //How much distance can we travel this update
@@ -79,6 +108,18 @@ public class Character {
     public void UnregisterOnChangedCallback(Action<Character> _cb)
     {
         cbCharacterChanged -= _cb;
+    }
+
+    public void OnJobEnded(Job _j)
+    {
+        //job completed or was cancelled
+
+        if(_j != myJob)
+        {
+            Debug.LogError("Character -- OnJobEnded: A Character is being told about a job that is not their own! Make sure everything is unregistered.");
+            return;
+        }
+        myJob = null;
     }
 
 }

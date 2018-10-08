@@ -85,14 +85,15 @@ public class Tile {
     //tells us if two tiles are adjacent
     public bool isNeighboor(Tile _tile, bool diagonalOkay = false)
     {
-        if(X == _tile.X &&(Y == _tile.Y + 1 || Y == _tile.Y - 1))
+        //if its on the same X see if the Y difference is only one
+        if(X == _tile.X && (Mathf.Abs(Y - _tile.Y) == 1))
             return true;
-
-        if (Y == _tile.Y && (X == _tile.X + 1 || X == _tile.X - 1))
+        //Same as above but X and Y switched
+        if (Y == _tile.Y && (Mathf.Abs(X - _tile.X) == 1))
             return true;
         if (diagonalOkay)
         {
-            //if it's to right and above or below
+            //if it's to right, and above or below
             if (X == _tile.X + 1 && (Y == _tile.Y+1 || Y == _tile.Y -1))
                 return true;
             //if it's to left and above or below

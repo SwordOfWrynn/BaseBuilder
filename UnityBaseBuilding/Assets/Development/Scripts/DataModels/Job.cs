@@ -20,6 +20,7 @@ public class Job {
         Tile = _tile;
         cbJobComplete += _cbJobComplete;
         jobObjectType = _jobObjectType;
+        jobTime = _jobTime;
     }
 
     public void DoWork(float _workTime)
