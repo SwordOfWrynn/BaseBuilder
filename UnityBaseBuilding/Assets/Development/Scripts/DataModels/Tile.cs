@@ -98,30 +98,47 @@ public class Tile {
     //tells us if two tiles are adjacent
     public bool isNeighboor(Tile _tile, bool diagonalOkay = false)
     {
-
+        //Check to see if the difference is exactly one between the two tile positions. If yes, then they are neighbours
         return Mathf.Abs(X - _tile.X) + Mathf.Abs(Y - _tile.Y) == 1 || (diagonalOkay && (Mathf.Abs(X - _tile.X) == 1 && Mathf.Abs(Y - _tile.Y) == 1));
+    }
 
-
-
-
-        /*
-        //if its on the same X see if the Y difference is only one
-        if(X == _tile.X && (Mathf.Abs(Y - _tile.Y) == 1))
-            return true;
-        //Same as above but X and Y switched
-        if (Y == _tile.Y && (Mathf.Abs(X - _tile.X) == 1))
-            return true;
-        if (diagonalOkay)
+    public Tile[] GetNeighbours( bool diagonalOkay = false)
+    {
+        Tile[] neighbourTiles;
+        if(diagonalOkay == false)
         {
-            //if it's to right, and above or below
-            if (X == _tile.X + 1 && (Y == _tile.Y+1 || Y == _tile.Y -1))
-                return true;
-            //if it's to left and above or below
-            if (X == _tile.X - 1 && (Y == _tile.Y + 1 || Y == _tile.Y - 1))
-                return true;
+            neighbourTiles = new Tile[4]; //Tile order N, E, S, W
+        }
+        else
+        {
+            neighbourTiles = new Tile[8]; //Tile order N, E, S, W, NE, SE, SW, NW
         }
 
-        return false;*/
+        Tile neighbour;
+
+        neighbour = World.GetTileAt(X, Y + 1);
+        neighbourTiles[0] = neighbour; //May be null
+        neighbour = World.GetTileAt(X + 1, Y);
+        neighbourTiles[1] = neighbour; //May be null
+        neighbour = World.GetTileAt(X, Y - 1);
+        neighbourTiles[2] = neighbour; //May be null
+        neighbour = World.GetTileAt(X - 1, Y);
+        neighbourTiles[3] = neighbour; //May be null
+
+        if (diagonalOkay)
+        {
+            neighbour = World.GetTileAt(X + 1, Y + 1);
+            neighbourTiles[4] = neighbour; //May be null
+            neighbour = World.GetTileAt(X + 1, Y - 1);
+            neighbourTiles[5] = neighbour; //May be null
+            neighbour = World.GetTileAt(X - 1, Y - 1);
+            neighbourTiles[6] = neighbour; //May be null
+            neighbour = World.GetTileAt(X - 1, Y + 1);
+            neighbourTiles[7] = neighbour; //May be null
+        }
+
+        return neighbourTiles;
+
     }
 
 }

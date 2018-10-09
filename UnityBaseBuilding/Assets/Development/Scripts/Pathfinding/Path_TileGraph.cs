@@ -14,7 +14,7 @@ public class Path_TileGraph{
     {
         //loop through all world walkable floor tiles, and create a Node for each.
 
-        nodes = new Dictionary<Tile, Path_Node<Tile>>;
+        nodes = new Dictionary<Tile, Path_Node<Tile>>();
 
         for (int x = 0; x < _world.Width; x++)
         {
@@ -24,7 +24,7 @@ public class Path_TileGraph{
 
                 if (t.MovementCost > 0) //Tiles with cost of 0 are non-walkable
                 {
-                    Path_Node<Tile> n = new Path_Node<Tile>;
+                    Path_Node<Tile> n = new Path_Node<Tile>();
                     n.data = t;
                     nodes.Add(t, n);
                 }
@@ -33,10 +33,32 @@ public class Path_TileGraph{
 
         //Now loop through all nodes and create edges
 
-        foreach(Tile n in nodes.Keys)
+        foreach(Tile t in nodes.Keys)
         {
-            //Get list of nieghbours for tiles, and create an edge if the nieghbour is walkable
+            Path_Node<Tile> n = nodes[t];
 
+            List<Path_Edge<Tile>> edges = new List<Path_Edge<Tile>>();
+
+            //Get list of nieghbours for tiles
+            Tile[] neighbours = t.GetNeighbours(true); //Some array spots may be null
+
+            //create an edge if the nieghbour is walkable
+            for (int i = 0; i < neighbours.Length; i++)
+            {
+                //See if neighbour exists and is walkable
+                if(neighbours[i] != null && neighbours[i].MovementCost != 0)
+                {
+                    //create an edge
+                    Path_Edge<Tile> e = new Path_Edge<Tile>();
+                    e.cost = neighbours[i].MovementCost;
+                    e.node = nodes[ neighbours[i] ];
+
+                    //add edge to temporary list
+                    edges.Add(e);
+                }
+            }
+
+            n.edges = edges.ToArray();
 
         }
 
