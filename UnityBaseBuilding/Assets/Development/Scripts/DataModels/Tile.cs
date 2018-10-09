@@ -46,6 +46,19 @@ public class Tile {
     public int X { get; protected set; }
     public int Y { get; protected set; }
 
+    public float MovementCost
+    {
+        get
+        {
+            if (Type == TileType.Empty)
+                return 0;
+            if (InstalledObject == null)
+                return 1;
+            return 1 * InstalledObject.MovementCost;
+        }
+
+    }
+
     public Tile( World world, int x, int y )
     {
         World = world;
@@ -85,6 +98,13 @@ public class Tile {
     //tells us if two tiles are adjacent
     public bool isNeighboor(Tile _tile, bool diagonalOkay = false)
     {
+
+        return Mathf.Abs(X - _tile.X) + Mathf.Abs(Y - _tile.Y) == 1 || (diagonalOkay && (Mathf.Abs(X - _tile.X) == 1 && Mathf.Abs(Y - _tile.Y) == 1));
+
+
+
+
+        /*
         //if its on the same X see if the Y difference is only one
         if(X == _tile.X && (Mathf.Abs(Y - _tile.Y) == 1))
             return true;
@@ -101,7 +121,7 @@ public class Tile {
                 return true;
         }
 
-        return false;
+        return false;*/
     }
 
 }

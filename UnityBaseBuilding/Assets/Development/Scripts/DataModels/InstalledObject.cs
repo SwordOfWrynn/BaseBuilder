@@ -16,7 +16,10 @@ public class InstalledObject {
     //e.g. moving through a tile with a cost of 2 with a InstalledObject with a cost of 3, that is on fire with has 3 cost
     //would have total cost of 8, so you'd move at 1/8 speed
     //SPECIAL: if movementCost = 0, then tile cannot be moved through
-    float movementCost;
+    public float MovementCost
+    {
+        get; protected set;
+    }
 
     //For example, a sofa may 3x2, but the graphic only covers 3x1, so there is leg room
     int width;
@@ -39,7 +42,7 @@ public class InstalledObject {
     {
         InstalledObject obj = new InstalledObject();
         obj.ObjectType = _objectType;
-        obj.movementCost = _movementCost;
+        obj.MovementCost = _movementCost;
         obj.width = _width;
         obj.height = _height;
         obj.LinksToNeighbour = _linksToNeighbour;
@@ -61,7 +64,7 @@ public class InstalledObject {
         InstalledObject obj = new InstalledObject();
 
         obj.ObjectType = _proto.ObjectType;
-        obj.movementCost = _proto.movementCost;
+        obj.MovementCost = _proto.MovementCost;
         obj.width = _proto.width;
         obj.height = _proto.height;
         obj.LinksToNeighbour = _proto.LinksToNeighbour;
