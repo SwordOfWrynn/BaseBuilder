@@ -20,6 +20,11 @@ public class BuildModeController : MonoBehaviour {
         WorldController.Instance.world.PlaceInstalledObject(InstalledObjectType, t);
     }
 
+    public void DoPathfindingTest()
+    {
+        WorldController.Instance.world.SetupPathfindingExample();
+    }
+
     public void DoBuild (Tile _t)
     {
         if (buildModeIsObjects)

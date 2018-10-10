@@ -7,12 +7,14 @@ public class Path_TileGraph{
     //this class constructs a simple pathfinding compatable graph of the world
     //Each tile is a node. each walkable neighbour of a tile is linked with an edge
 
-    Dictionary<Tile, Path_Node<Tile>> nodes;
+    public Dictionary<Tile, Path_Node<Tile>> nodes;
     
     
 	public Path_TileGraph(World _world)
     {
         //loop through all world walkable floor tiles, and create a Node for each.
+
+        Debug.Log("Path_TileGraph");
 
         nodes = new Dictionary<Tile, Path_Node<Tile>>();
 
@@ -30,10 +32,13 @@ public class Path_TileGraph{
                 }
             }
         }
+        Debug.Log("Path_TileGraph: created " + nodes.Count + " nodes");
+
+        int edgeCount = 0;
 
         //Now loop through all nodes and create edges
 
-        foreach(Tile t in nodes.Keys)
+        foreach (Tile t in nodes.Keys)
         {
             Path_Node<Tile> n = nodes[t];
 
@@ -46,21 +51,23 @@ public class Path_TileGraph{
             for (int i = 0; i < neighbours.Length; i++)
             {
                 //See if neighbour exists and is walkable
-                if(neighbours[i] != null && neighbours[i].MovementCost != 0)
+                if (neighbours[i] != null && neighbours[i].MovementCost != 0)
                 {
                     //create an edge
                     Path_Edge<Tile> e = new Path_Edge<Tile>();
                     e.cost = neighbours[i].MovementCost;
-                    e.node = nodes[ neighbours[i] ];
+                    e.node = nodes[neighbours[i]];
 
                     //add edge to temporary list
                     edges.Add(e);
+                    edgeCount++;
                 }
             }
 
             n.edges = edges.ToArray();
 
         }
+        Debug.Log("Path_TileGraph: created " + edgeCount + " edges");
 
     }
 

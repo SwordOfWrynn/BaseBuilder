@@ -7,6 +7,8 @@ public class World
     Tile[,] tiles;
 
     List<Character> characters;
+    //the pathfinding graph used to navigate world
+    public Path_TileGraph tileGraph;
 
     //when we pass this a string it will give the corresponding InstalledObject, or visa-versa
     Dictionary<string, InstalledObject> installedObjectPrototypes;
@@ -119,6 +121,7 @@ public class World
         if(cbInstalledObjectCreated != null)
         {
             cbInstalledObjectCreated(obj);
+            InvalidateTileGraph();
         }
     }
 
@@ -146,6 +149,8 @@ public class World
     {
         cbTileChanged -= _callbackFunction;
     }
+
+    //Called whenever any tile changes
     void OnTileChanged(Tile _t)
     {
         if (cbTileChanged == null)
@@ -154,7 +159,15 @@ public class World
         }
 
         cbTileChanged(_t);
+
+        InvalidateTileGraph();
     }
+    //should be called whenever a change to the world means the old pathfinding info is invalid
+    public void InvalidateTileGraph()
+    {
+        tileGraph = null;
+    }
+
     public bool IsInstalledObjectPlacementValid(string InstalledObjectType, Tile t)
     {
         return installedObjectPrototypes[InstalledObjectType].IsValidPosition(t);
@@ -169,6 +182,37 @@ public class World
         }
 
         return installedObjectPrototypes[_objectType];
+    }
+
+    public void SetupPathfindingExample()
+    {
+        Debug.Log("SetupPathfindingExample");
+
+        // Make a set of floors/walls to test pathfinding with.
+
+        int l = Width / 2 - 5;
+        int b = Height / 2 - 5;
+
+        for (int x = l - 5; x < l + 15; x++)
+        {
+            for (int y = b - 5; y < b + 15; y++)
+            {
+                tiles[x, y].Type = TileType.Floor;
+
+
+                if (x == l || x == (l + 9) || y == b || y == (b + 9))
+                {
+                    if (x != (l + 9) && y != (b + 4))
+                    {
+                        PlaceInstalledObject("Wall", tiles[x, y]);
+                    }
+                }
+
+
+
+            }
+        }
+
     }
 
 }
