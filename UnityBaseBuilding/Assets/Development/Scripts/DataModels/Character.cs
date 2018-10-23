@@ -6,11 +6,11 @@ public class Character {
 
     public float X
     {
-        get { return Mathf.Lerp(currentTile.X, destinationTile.X, movementPercentage); }
+        get { return Mathf.Lerp(currentTile.X, nextTile.X, movementPercentage); }
     }
     public float Y
     {
-        get { return Mathf.Lerp(currentTile.Y, destinationTile.Y, movementPercentage); }
+        get { return Mathf.Lerp(currentTile.Y, nextTile.Y, movementPercentage); }
     }
 
     public Tile currentTile
@@ -18,6 +18,8 @@ public class Character {
         get; protected set;
     }
     Tile destinationTile; //If we aren't moving, will equal current tile
+    Tile nextTile; //the next tile in the pathfinding sequence
+    Path_AStar pathAStar;
     float movementPercentage; //goes from 0 to 1  as we move between the 2 tiles
 
     float speed = 2f; //Tiles per second
@@ -28,20 +30,34 @@ public class Character {
 
     public Character(Tile _tile)
     {
-        currentTile = destinationTile = _tile; //set both currentTile and destinationTile equal to _tile
+        currentTile = destinationTile = nextTile = _tile; //set both currentTile and destinationTile equal to _tile
     }
+
     //This will allow us to control our own time, instead of using default Update. So we can make the game run faster or slower
     public void Update(float _deltaTime)
     {
 
+        Update_DoJob(_deltaTime);
+
+        Update_DoMovement(_deltaTime);
+
+        if (cbCharacterChanged != null)
+        {
+            cbCharacterChanged(this);
+        }
+
+    }
+
+    void Update_DoJob(float _deltaTime)
+    {
         //Do I have a job?
-        if(myJob == null)
+        if (myJob == null)
         {
             //Get a new job
             myJob = currentTile.World.jobQueue.Dequeue();
 
             //if I got a job
-            if(myJob != null)
+            if (myJob != null)
             {
                 destinationTile = myJob.Tile;
 
@@ -50,24 +66,54 @@ public class Character {
             }
         }
 
-
-
-
         //if we are already there
         if (currentTile == destinationTile)
         {
-            if(myJob != null)
+            if (myJob != null)
             {
                 myJob.DoWork(_deltaTime);
             }
+            
+        }
+    }
 
-
-
+    void Update_DoMovement(float _deltaTime)
+    {
+        //if we don't need to move, don't move, we're already here
+        if (currentTile == destinationTile)
+        {
+            pathAStar = null;
             return;
         }
 
+        if(nextTile == null || nextTile == currentTile)
+        {
+            //Get next tile from pathfinder
+            if(pathAStar == null || pathAStar.Length() == 0)
+            {
+                //generate a path
+                pathAStar = new Path_AStar(currentTile.World, currentTile, destinationTile); //calculate a path from the current tile to the destination tile
+                if(pathAStar.Length()==0)
+                {
+                    Debug.LogError("Character -- Update_DoMovement: Path_AStar returned no path to destination");
+                    AbandonJob();
+                    pathAStar = null;
+                    return;
+                }
+            }
+            //Grab next waypoint
+            nextTile = pathAStar.Dequeue();
+            if(nextTile == currentTile)
+            {
+                Debug.LogError("Character-- Update_DoMovement: nextTile is equal to currentTile");
+            }
+
+        }
+        //At this point we should have a valid nextTile
+
+
         //total distance from point A to point B
-        float distanceToTravel = Mathf.Sqrt(Mathf.Pow(currentTile.X - destinationTile.X, 2) + Mathf.Pow(currentTile.Y - destinationTile.Y, 2));
+        float distanceToTravel = Mathf.Sqrt(Mathf.Pow(currentTile.X - nextTile.X, 2) + Mathf.Pow(currentTile.Y - nextTile.Y, 2));
         //How much distance can we travel this update
         float distanceThisFrame = speed * _deltaTime;
         //How mush is that in terms of percentage to our destination
@@ -79,17 +125,11 @@ public class Character {
         //if we have reached the destination
         if (movementPercentage >= 1)
         {
-            currentTile = destinationTile;
+            currentTile = nextTile;
             movementPercentage = 0;
         }
-
-        if(cbCharacterChanged != null)
-        {
-            cbCharacterChanged(this);
-        }
-
     }
-
+    
     public void SetDestination(Tile _tile)
     {
         if(currentTile.isNeighboor(_tile, true) == false)
@@ -99,6 +139,14 @@ public class Character {
 
         destinationTile = _tile;
 
+    }
+    //stop pathfinding and put job back in queue
+    public void AbandonJob()
+    {
+        nextTile = destinationTile = currentTile;
+        pathAStar = null;
+        currentTile.World.jobQueue.Enqueue(myJob);
+        myJob = null;
     }
 
     public void RegisterOnChangedCallback(Action<Character> _cb)

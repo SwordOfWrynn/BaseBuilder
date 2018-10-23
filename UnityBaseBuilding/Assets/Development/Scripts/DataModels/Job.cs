@@ -15,7 +15,7 @@ public class Job {
     Action<Job> cbJobComplete;
     Action<Job> cbJobCancelled;
     
-    public Job(Tile _tile, string _jobObjectType, Action<Job> _cbJobComplete, float _jobTime = 1f)
+    public Job(Tile _tile, string _jobObjectType, Action<Job> _cbJobComplete, float _jobTime = 0.1f)
     {
         Tile = _tile;
         cbJobComplete += _cbJobComplete;
