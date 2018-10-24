@@ -24,12 +24,12 @@ public class Path_TileGraph{
             {
                 Tile t = _world.GetTileAt(x, y);
 
-                if (t.MovementCost > 0) //Tiles with cost of 0 are non-walkable
-                {
+                //if (t.MovementCost > 0) //Tiles with cost of 0 are non-walkable
+                //{
                     Path_Node<Tile> n = new Path_Node<Tile>();
                     n.data = t;
                     nodes.Add(t, n);
-                }
+                //}
             }
         }
         Debug.Log("Path_TileGraph: created " + nodes.Count + " nodes");

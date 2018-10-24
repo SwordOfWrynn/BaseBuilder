@@ -24,6 +24,9 @@ public class Path_AStar {
         if (nodes.ContainsKey(_tileStart) == false)
         {
             Debug.LogError("Path_AStar -- Path_AStar: The starting tile is not in the list of nodes.");
+
+
+
             return;
         }
         if (nodes.ContainsKey(_tileStart) == false)
@@ -81,7 +84,8 @@ public class Path_AStar {
                 if (ClosedSet.Contains(neighbor))
                     continue;
 
-                float tentative_g_score = g_score[current] + DistBetween(current, neighbor);
+                float movementCostToNeighbor = neighbor.data.MovementCost * DistBetween(current, neighbor);
+                float tentative_g_score = g_score[current] + movementCostToNeighbor;
 
                 if (OpenSet.Contains(neighbor) && tentative_g_score >= g_score[neighbor])
                     continue;

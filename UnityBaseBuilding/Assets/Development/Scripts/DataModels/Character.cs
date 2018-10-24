@@ -68,6 +68,7 @@ public class Character {
 
         //if we are already there
         if (currentTile == destinationTile)
+        //if(pathAStar != null && pathAStar.Length() == 1) //we are next to job site
         {
             if (myJob != null)
             {
@@ -109,6 +110,10 @@ public class Character {
             }
 
         }
+
+        //if (pathAStar.Length() == 1)
+        //    return;
+
         //At this point we should have a valid nextTile
 
 

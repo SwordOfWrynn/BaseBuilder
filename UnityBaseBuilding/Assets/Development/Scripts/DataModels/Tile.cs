@@ -51,9 +51,10 @@ public class Tile {
         get
         {
             if (Type == TileType.Empty)
-                return 0;
+                return 0; //0 is unwalkable
             if (InstalledObject == null)
                 return 1;
+
             return 1 * InstalledObject.MovementCost;
         }
 
