@@ -53,6 +53,12 @@ public class Path_TileGraph{
                 //See if neighbour exists and is walkable
                 if (neighbours[i] != null && neighbours[i].MovementCost != 0)
                 {
+                    //make sure we won't clip through wall corners, or squeeze through 2 diagonal walls
+                    if (IsClippingCorner(t, neighbours[i]))
+                    {
+                        continue; //skip to next neighbor with out building edge
+                    }
+
                     //create an edge
                     Path_Edge<Tile> e = new Path_Edge<Tile>();
                     e.cost = neighbours[i].MovementCost;
@@ -68,6 +74,29 @@ public class Path_TileGraph{
 
         }
         Debug.Log("Path_TileGraph: created " + edgeCount + " edges");
+
+    }
+
+    bool IsClippingCorner( Tile _currentTile, Tile _neighborTile)
+    {
+        //if movement from current tile to the neighbor tile is diagonal, tehan chack to make sure we wont be clipping
+
+        //see if we are diagonal
+        if(Mathf.Abs(_currentTile.X - _neighborTile.X) + Mathf.Abs(_currentTile.Y - _neighborTile.Y) == 2)
+        {
+            int dX = _currentTile.X - _neighborTile.X;
+            int dY = _currentTile.Y - _neighborTile.Y;
+
+            //if east or west is unwalkable, meaning this would be clipped movement
+            if (_currentTile.World.GetTileAt(_currentTile.X - dX, _currentTile.Y).MovementCost == 0)
+                return true;
+
+            //if north or south is unwalkable, meaning this would be clipped movement
+            if (_currentTile.World.GetTileAt(_currentTile.X, _currentTile.Y - dY).MovementCost == 0)
+                return true;
+        }
+
+        return false;
 
     }
 
