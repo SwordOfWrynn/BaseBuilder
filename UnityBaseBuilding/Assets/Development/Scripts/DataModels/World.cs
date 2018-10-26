@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
-public class World
+public class World : IXmlSerializable
 {
     Tile[,] tiles;
 
@@ -23,7 +26,12 @@ public class World
 
     public JobQueue jobQueue;
 
-    public World(int _width = 100, int _height = 100)
+    public World(int _width, int _height)
+    {
+        SetUpWorld(_width, _height);
+    }
+
+    void SetUpWorld(int _width, int _height)
     {
         jobQueue = new JobQueue();
 
@@ -213,6 +221,44 @@ public class World
             }
         }
 
+    }
+
+
+    //Saving and Loading
+
+    public World()
+    {
+
+    }
+
+    public XmlSchema GetSchema()
+    {
+        return null;
+    }
+
+    public void WriteXml(XmlWriter _writer)
+    {
+        //save info here
+
+        _writer.WriteAttributeString("Width", Width.ToString());
+        _writer.WriteAttributeString("Height", Height.ToString());
+    }
+
+    public void ReadXml(XmlReader _reader)
+    {
+        Debug.Log("World -- ReadXml");
+        //load info here
+        
+
+        _reader.MoveToAttribute("Width");
+        Width = _reader.ReadContentAsInt();
+        Debug.Log("Width: " + Width);
+
+        _reader.MoveToAttribute("Height");
+        Height = _reader.ReadContentAsInt();
+        Debug.Log("Height: " + Height);
+
+        SetUpWorld(Width, Height);
     }
 
 }
