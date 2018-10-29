@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
-public class Character {
+public class Character : IXmlSerializable{
 
     public float X
     {
@@ -27,6 +30,11 @@ public class Character {
     Action<Character> cbCharacterChanged;
 
     Job myJob;
+
+    public Character()
+    {
+        //use only for serialization
+    }
 
     public Character(Tile _tile)
     {
@@ -173,6 +181,22 @@ public class Character {
             return;
         }
         myJob = null;
+    }
+
+    public XmlSchema GetSchema()
+    {
+        return null;
+    }
+
+    public void WriteXml(XmlWriter _writer)
+    {
+        _writer.WriteAttributeString("X", currentTile.X.ToString());
+        _writer.WriteAttributeString("Y", currentTile.Y.ToString());
+    }
+
+    public void ReadXml(XmlReader _reader)
+    {
+
     }
 
 }

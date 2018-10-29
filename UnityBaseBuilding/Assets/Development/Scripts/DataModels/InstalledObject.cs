@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
 //InstalledObjects are things like walls, doors, furniture, etc.
-public class InstalledObject {
+public class InstalledObject : IXmlSerializable {
 
     //this represents BASE tile of the object, large objects may occupy multipule tiles
     public Tile Tile { get; protected set; } 
@@ -32,7 +35,7 @@ public class InstalledObject {
     //Func is like an action, but will return something, in this case a boolean
     Func<Tile, bool> funcPositionValidation;
 
-    protected InstalledObject()
+    public InstalledObject()
     {
 
     }
@@ -90,28 +93,28 @@ public class InstalledObject {
 
             t = obj.Tile.World.GetTileAt(x, y + 1);
             //if there is a tile above us, it has an object on it, and that object matches ours
-            if (t != null && t.InstalledObject != null && t.InstalledObject.ObjectType == obj.ObjectType)
+            if (t != null && t.InstalledObject != null && t.InstalledObject.cbOnChanged != null && t.InstalledObject.ObjectType == obj.ObjectType)
             {
                 t.InstalledObject.cbOnChanged(t.InstalledObject);
             }
 
             t = obj.Tile.World.GetTileAt(x + 1, y);
             //if there is a tile to the right, it has an object on it, and that object matches ours
-            if (t != null && t.InstalledObject != null && t.InstalledObject.ObjectType == obj.ObjectType)
+            if (t != null && t.InstalledObject != null && t.InstalledObject.cbOnChanged != null && t.InstalledObject.ObjectType == obj.ObjectType)
             {
                 t.InstalledObject.cbOnChanged(t.InstalledObject);
             }
 
             t = obj.Tile.World.GetTileAt(x, y - 1);
             //if there is a tile below us, it has an object on it, and that object matches ours
-            if (t != null && t.InstalledObject != null && t.InstalledObject.ObjectType == obj.ObjectType)
+            if (t != null && t.InstalledObject != null && t.InstalledObject.cbOnChanged != null && t.InstalledObject.ObjectType == obj.ObjectType)
             {
                 t.InstalledObject.cbOnChanged(t.InstalledObject);
             }
 
             t = obj.Tile.World.GetTileAt(x - 1, y);
             //if there is a tile to the left, it has an object on it, and that object matches ours
-            if (t != null && t.InstalledObject != null && t.InstalledObject.ObjectType == obj.ObjectType)
+            if (t != null && t.InstalledObject != null && t.InstalledObject.cbOnChanged != null && t.InstalledObject.ObjectType == obj.ObjectType)
             {
                 t.InstalledObject.cbOnChanged(t.InstalledObject);
             }
@@ -161,4 +164,24 @@ public class InstalledObject {
 
         return true;
     }
+
+    public XmlSchema GetSchema()
+    {
+        return null;
+    }
+
+    public void WriteXml(XmlWriter _writer)
+    {
+        _writer.WriteAttributeString("X", Tile.X.ToString());
+        _writer.WriteAttributeString("Y", Tile.Y.ToString());
+        _writer.WriteAttributeString("ObjectType", ObjectType);
+        _writer.WriteAttributeString("MovementCost", MovementCost.ToString());
+    }
+
+    public void ReadXml(XmlReader _reader)
+    {
+        //X, Y, Tile and object type should have already been set in the World
+        MovementCost = int.Parse(_reader.GetAttribute("MovementCost"));
+    }
+
 }

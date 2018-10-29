@@ -38,12 +38,14 @@ public class TileSpriteController : MonoBehaviour {
                 sr.sprite = emptySprite;
                 sr.sortingLayerName = "Tiles";
 
-                //register callback so our GameObject gets updated
-                //this tells the Tile the function it should run (OnTileChanged) when it's Type changed
+                //manually call callback for loading
+                OnTileChanged(tile_data);
 
             }
         }
 
+        //register callback so our GameObject gets updated
+        //this tells the Tile the function it should run (OnTileChanged) when it's Type changed
         world.RegisterTileChanged(OnTileChanged);
 
     }

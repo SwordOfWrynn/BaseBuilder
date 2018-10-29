@@ -159,12 +159,7 @@ public class Tile : IXmlSerializable{
 
     public void ReadXml(XmlReader _reader)
     {
-        _reader.MoveToAttribute("X");
-        X = _reader.ReadContentAsInt();
-        _reader.MoveToAttribute("Y");
-        Y = _reader.ReadContentAsInt();
-        _reader.MoveToAttribute("Type");
-        Type = (TileType)_reader.ReadContentAsInt();
+        Type = (TileType)int.Parse(_reader.GetAttribute("Type"));
     }
 
 }
