@@ -242,6 +242,19 @@ public class World : IXmlSerializable
 
         _writer.WriteAttributeString("Width", Width.ToString());
         _writer.WriteAttributeString("Height", Height.ToString());
+
+        _writer.WriteStartElement("Tiles");
+        for (int x = 0; x < Width; x++)
+        {
+            for (int y = 0; y < Height; y++)
+            {
+                _writer.WriteStartElement("Tile");
+                tiles[x, y].WriteXml(_writer);
+                _writer.WriteEndElement();
+            }
+        }
+        _writer.WriteEndElement();
+
     }
 
     public void ReadXml(XmlReader _reader)
@@ -249,7 +262,7 @@ public class World : IXmlSerializable
         Debug.Log("World -- ReadXml");
         //load info here
         
-
+        //move to and Read attributes of the World element
         _reader.MoveToAttribute("Width");
         Width = _reader.ReadContentAsInt();
         Debug.Log("Width: " + Width);
@@ -257,8 +270,31 @@ public class World : IXmlSerializable
         _reader.MoveToAttribute("Height");
         Height = _reader.ReadContentAsInt();
         Debug.Log("Height: " + Height);
+        //move back to the World element
+        _reader.MoveToElement();
 
         SetUpWorld(Width, Height);
+
+        //move to a descendant element of the world element named Tiles
+        _reader.ReadToDescendant("Tiles");
+        //move to a descendant element of the Tiles element named Tile
+        _reader.ReadToDescendant("Tile");
+        Debug.Log(_reader.Name);
+        while (_reader.IsStartElement("Tile"))
+        {
+            //move to the attributes of the Tile
+            _reader.MoveToAttribute("X");
+            int x = _reader.ReadContentAsInt();
+            _reader.MoveToAttribute("Y");
+            int y = _reader.ReadContentAsInt();
+
+            //Debug.Log("Reading Tile: " + x + " ," + y);
+
+            tiles[x, y].ReadXml(_reader);
+
+            //move to another descendant of Tiles named Tile
+            _reader.ReadToNextSibling("Tile");
+        }
     }
 
 }

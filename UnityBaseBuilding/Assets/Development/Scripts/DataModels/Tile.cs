@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
 
-    //TileType is base type of the tile, to tell if it's part of the 
-    //station or empty space or some other tile type
-    //It is outside the class so it can be used everywhere and not 
-    //needing a reference to the Tile class
-    public enum TileType { Empty, Floor };
+//TileType is base type of the tile, to tell if it's part of the 
+//station or empty space or some other tile type
+//It is outside the class so it can be used everywhere and not 
+//needing a reference to the Tile class
+public enum TileType { Empty, Floor };
 
-public class Tile {
+public class Tile : IXmlSerializable{
 
 
 
@@ -140,6 +143,28 @@ public class Tile {
 
         return neighbourTiles;
 
+    }
+
+    public XmlSchema GetSchema()
+    {
+        return null;
+    }
+
+    public void WriteXml(XmlWriter _writer)
+    {
+        _writer.WriteAttributeString("X", X.ToString());
+        _writer.WriteAttributeString("Y", Y.ToString());
+        _writer.WriteAttributeString("Type", ((int)Type).ToString() );
+    }
+
+    public void ReadXml(XmlReader _reader)
+    {
+        _reader.MoveToAttribute("X");
+        X = _reader.ReadContentAsInt();
+        _reader.MoveToAttribute("Y");
+        Y = _reader.ReadContentAsInt();
+        _reader.MoveToAttribute("Type");
+        Type = (TileType)_reader.ReadContentAsInt();
     }
 
 }
