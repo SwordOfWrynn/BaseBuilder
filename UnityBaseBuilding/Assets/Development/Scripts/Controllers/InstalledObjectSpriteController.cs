@@ -118,7 +118,7 @@ public class InstalledObjectSpriteController : MonoBehaviour {
         //return name that matches the sprite name
         if (installedObjectSprites.ContainsKey(spriteName) == false)
         {
-            Debug.LogError("GetSpriteForInstalledObject -- The Sprite for the" + spriteName + "object does not exist!");
+            Debug.LogError("GetSpriteForInstalledObject -- The Sprite for the " + spriteName + " object does not exist!");
             return null;
         }
         return installedObjectSprites[spriteName];

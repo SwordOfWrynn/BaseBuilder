@@ -19,8 +19,12 @@ public class CharacterSpriteController : MonoBehaviour{
 
         world.RegisterCharacterCreated(OnCharacterCreated);
 
-        Character c = world.CreateCharacter(world.GetTileAt(world.Width/2, world.Height/2));
-        //c.SetDestination(world.GetTileAt(world.Width / 2 + 5, world.Height / 2));
+        //check for pre-existing characters, which won't do the callback
+        foreach(Character c in world.characters)
+        {
+            OnCharacterCreated(c);
+        }
+
     }
 
     void LoadSpritesFromResources()

@@ -9,7 +9,7 @@ public class World : IXmlSerializable
 {
     Tile[,] tiles;
 
-    List<Character> characters;
+    public List<Character> characters;
     public List<InstalledObject> installedObjects;
 
     //the pathfinding graph used to navigate world
@@ -30,7 +30,11 @@ public class World : IXmlSerializable
 
     public World(int _width, int _height)
     {
+        //Creates an empty world
         SetUpWorld(_width, _height);
+
+        //create a character
+        Character c = CreateCharacter(GetTileAt(Width / 2, Height / 2));
     }
 
     void SetUpWorld(int _width, int _height)
@@ -81,8 +85,9 @@ public class World : IXmlSerializable
     protected void CreateInstalledObjectPrototypes()
     {
         installedObjectPrototypes = new Dictionary<string, InstalledObject>();
-        
-        installedObjectPrototypes.Add("Wall", InstalledObject.CreatePrototype("Wall", 0, 1, 1, true));
+        installedObjectPrototypes.Add("Wall", new InstalledObject("Wall", 0, 1, 1, true)); //The order is name, move cost, width, height, if it links to neighbors
+
+        installedObjectPrototypes.Add("Door", new InstalledObject("Door", 0, 1, 1, true)); //The order is name, move cost, width, height, if it links to neighbors
     }
 
     public void RandomizeTiles()
@@ -355,7 +360,7 @@ public class World : IXmlSerializable
             int x = int.Parse(_reader.GetAttribute("X"));
             int y = int.Parse(_reader.GetAttribute("Y"));
 
-            Character c = new Character(tiles[x, y]);
+            Character c = CreateCharacter(tiles[x, y]);
             //Things like health set in c's ReadXml
             c.ReadXml(_reader);
         }

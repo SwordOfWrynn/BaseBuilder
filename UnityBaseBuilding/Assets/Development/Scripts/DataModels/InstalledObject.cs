@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 //InstalledObjects are things like walls, doors, furniture, etc.
 public class InstalledObject : IXmlSerializable {
-
+    
     //this represents BASE tile of the object, large objects may occupy multipule tiles
     public Tile Tile { get; protected set; } 
 
@@ -37,22 +37,28 @@ public class InstalledObject : IXmlSerializable {
 
     public InstalledObject()
     {
+        //Empty constructor used for Xml serialization
+    }
 
+    public InstalledObject(InstalledObject _other)
+    {
+        ObjectType = _other.ObjectType;
+        MovementCost = _other.MovementCost;
+        width = _other.width;
+        height = _other.height;
+        LinksToNeighbour = _other.LinksToNeighbour;
     }
 
     //this will be used to create the prototypical objects in the code that the real ones will be copied from
-    static public InstalledObject CreatePrototype (string _objectType, float _movementCost = 1f, int _width = 1, int _height = 1, bool _linksToNeighbour = false)
+    public InstalledObject (string _objectType, float _movementCost = 1f, int _width = 1, int _height = 1, bool _linksToNeighbour = false)
     {
-        InstalledObject obj = new InstalledObject();
-        obj.ObjectType = _objectType;
-        obj.MovementCost = _movementCost;
-        obj.width = _width;
-        obj.height = _height;
-        obj.LinksToNeighbour = _linksToNeighbour;
+        ObjectType = _objectType;
+        MovementCost = _movementCost;
+        width = _width;
+        height = _height;
+        LinksToNeighbour = _linksToNeighbour;
 
-        obj.funcPositionValidation = obj._IsValidPosition;
-        
-        return obj;
+        funcPositionValidation = _IsValidPosition;
     }
     //takes the prototype and a tile and creates the actual object
     static public InstalledObject PlaceInstance (InstalledObject _proto, Tile _tile)
@@ -64,17 +70,11 @@ public class InstalledObject : IXmlSerializable {
         }
         //We now know that the placement is valid
 
-        InstalledObject obj = new InstalledObject();
+        InstalledObject inObj = new InstalledObject(_proto);
 
-        obj.ObjectType = _proto.ObjectType;
-        obj.MovementCost = _proto.MovementCost;
-        obj.width = _proto.width;
-        obj.height = _proto.height;
-        obj.LinksToNeighbour = _proto.LinksToNeighbour;
+        inObj.Tile = _tile;
 
-        obj.Tile = _tile;
-
-        if(obj.Tile.PlaceObject(obj) == false)
+        if(inObj.Tile.PlaceObject(inObj) == false)
         {
             //For some reason, we weren't able to place the object on the tile, it was probaly occupied already
 
@@ -82,46 +82,46 @@ public class InstalledObject : IXmlSerializable {
             return null;
         }
 
-        if (obj.LinksToNeighbour)
+        if (inObj.LinksToNeighbour)
         {
             //this type of InstalledObject links to neighbors so we need to inform its new neighbors when it is made
 
             Tile t;
 
-            int x = obj.Tile.X;
-            int y = obj.Tile.Y;
+            int x = inObj.Tile.X;
+            int y = inObj.Tile.Y;
 
-            t = obj.Tile.World.GetTileAt(x, y + 1);
+            t = inObj.Tile.World.GetTileAt(x, y + 1);
             //if there is a tile above us, it has an object on it, and that object matches ours
-            if (t != null && t.InstalledObject != null && t.InstalledObject.cbOnChanged != null && t.InstalledObject.ObjectType == obj.ObjectType)
+            if (t != null && t.InstalledObject != null && t.InstalledObject.cbOnChanged != null && t.InstalledObject.ObjectType == inObj.ObjectType)
             {
                 t.InstalledObject.cbOnChanged(t.InstalledObject);
             }
 
-            t = obj.Tile.World.GetTileAt(x + 1, y);
+            t = inObj.Tile.World.GetTileAt(x + 1, y);
             //if there is a tile to the right, it has an object on it, and that object matches ours
-            if (t != null && t.InstalledObject != null && t.InstalledObject.cbOnChanged != null && t.InstalledObject.ObjectType == obj.ObjectType)
+            if (t != null && t.InstalledObject != null && t.InstalledObject.cbOnChanged != null && t.InstalledObject.ObjectType == inObj.ObjectType)
             {
                 t.InstalledObject.cbOnChanged(t.InstalledObject);
             }
 
-            t = obj.Tile.World.GetTileAt(x, y - 1);
+            t = inObj.Tile.World.GetTileAt(x, y - 1);
             //if there is a tile below us, it has an object on it, and that object matches ours
-            if (t != null && t.InstalledObject != null && t.InstalledObject.cbOnChanged != null && t.InstalledObject.ObjectType == obj.ObjectType)
+            if (t != null && t.InstalledObject != null && t.InstalledObject.cbOnChanged != null && t.InstalledObject.ObjectType == inObj.ObjectType)
             {
                 t.InstalledObject.cbOnChanged(t.InstalledObject);
             }
 
-            t = obj.Tile.World.GetTileAt(x - 1, y);
+            t = inObj.Tile.World.GetTileAt(x - 1, y);
             //if there is a tile to the left, it has an object on it, and that object matches ours
-            if (t != null && t.InstalledObject != null && t.InstalledObject.cbOnChanged != null && t.InstalledObject.ObjectType == obj.ObjectType)
+            if (t != null && t.InstalledObject != null && t.InstalledObject.cbOnChanged != null && t.InstalledObject.ObjectType == inObj.ObjectType)
             {
                 t.InstalledObject.cbOnChanged(t.InstalledObject);
             }
 
         }
 
-        return obj;
+        return inObj;
     }
 
     public void RegisterOnChangedCallback(Action<InstalledObject> callbackFunction)
