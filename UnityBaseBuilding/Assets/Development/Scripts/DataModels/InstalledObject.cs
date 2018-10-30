@@ -7,7 +7,11 @@ using System.Xml.Serialization;
 
 //InstalledObjects are things like walls, doors, furniture, etc.
 public class InstalledObject : IXmlSerializable {
-    
+
+    public Dictionary<string, float> inObjParameters;
+    public Action<InstalledObject, float> updateActions;
+
+
     //this represents BASE tile of the object, large objects may occupy multipule tiles
     public Tile Tile { get; protected set; } 
 
@@ -38,15 +42,26 @@ public class InstalledObject : IXmlSerializable {
     public InstalledObject()
     {
         //Empty constructor used for Xml serialization
+        inObjParameters = new Dictionary<string, object>();
     }
 
-    public InstalledObject(InstalledObject _other)
+    protected InstalledObject(InstalledObject _other)
     {
         ObjectType = _other.ObjectType;
         MovementCost = _other.MovementCost;
         width = _other.width;
         height = _other.height;
         LinksToNeighbour = _other.LinksToNeighbour;
+
+        inObjParameters = new Dictionary<string, object>(_other.inObjParameters);
+
+        if(_other.updateActions != null)
+            updateActions = (Action<InstalledObject, float>)_other.updateActions.Clone();
+    }
+
+    virtual public InstalledObject Clone ()
+    {
+        return new InstalledObject(this);
     }
 
     //this will be used to create the prototypical objects in the code that the real ones will be copied from
@@ -59,7 +74,18 @@ public class InstalledObject : IXmlSerializable {
         LinksToNeighbour = _linksToNeighbour;
 
         funcPositionValidation = _IsValidPosition;
+
+        inObjParameters = new Dictionary<string, object>();
     }
+
+    public void Update(float _deltaTime)
+    {
+        if(updateActions != null)
+        {
+            updateActions(this, _deltaTime);
+        }
+    }
+
     //takes the prototype and a tile and creates the actual object
     static public InstalledObject PlaceInstance (InstalledObject _proto, Tile _tile)
     {
@@ -70,7 +96,8 @@ public class InstalledObject : IXmlSerializable {
         }
         //We now know that the placement is valid
 
-        InstalledObject inObj = new InstalledObject(_proto);
+        //create object
+        InstalledObject inObj = _proto.Clone();
 
         inObj.Tile = _tile;
 
@@ -176,12 +203,25 @@ public class InstalledObject : IXmlSerializable {
         _writer.WriteAttributeString("Y", Tile.Y.ToString());
         _writer.WriteAttributeString("ObjectType", ObjectType);
         _writer.WriteAttributeString("MovementCost", MovementCost.ToString());
+
+        foreach (string k in inObjParameters.Keys)
+        {
+            _writer.WriteStartElement("Param");
+            _writer.WriteAttributeString("name", k);
+            _writer.WriteAttributeString("value", inObjParameters[k].ToString());
+            _writer.WriteEndElement();
+        }
     }
 
     public void ReadXml(XmlReader _reader)
     {
         //X, Y, Tile and object type should have already been set in the World
         MovementCost = int.Parse(_reader.GetAttribute("MovementCost"));
+
+        if (_reader.ReadToDescendant("Param"))
+        {
+
+        }
     }
 
 }

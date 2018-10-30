@@ -68,6 +68,10 @@ public class World : IXmlSerializable
         {
             c.Update(_deltaTime);
         }
+        foreach (InstalledObject inObj in installedObjects)
+        {
+            inObj.Update(_deltaTime);
+        }
     }
     
     public Character CreateCharacter(Tile _tile)
@@ -88,6 +92,9 @@ public class World : IXmlSerializable
         installedObjectPrototypes.Add("Wall", new InstalledObject("Wall", 0, 1, 1, true)); //The order is name, move cost, width, height, if it links to neighbors
 
         installedObjectPrototypes.Add("Door", new InstalledObject("Door", 0, 1, 1, true)); //The order is name, move cost, width, height, if it links to neighbors
+
+        installedObjectPrototypes["Door"].inObjParameters["openess"] = 0;
+        installedObjectPrototypes["Door"].updateActions += InstalledObjectActions.Door_UpdateAction;
     }
 
     public void RandomizeTiles()
@@ -318,51 +325,58 @@ public class World : IXmlSerializable
 
     void ReadXml_Tiles(XmlReader _reader)
     {
-        //We are in the Tiles element, read it's descendant elements named Tile until we run out
-        while (_reader.Read())
-        {
-            if (_reader.Name != "Tile")
-                return; //we are out of tiles
 
-            //Read X and Y attributes of the Tile element
-            int x = int.Parse(_reader.GetAttribute("X"));
-            int y = int.Parse(_reader.GetAttribute("Y"));
-            tiles[x, y].ReadXml(_reader);
+        if (_reader.ReadToDescendant("Tile"))
+        {
+            //We have at least one tile
+            do
+            {
+                //Read X and Y attributes of the Tile element
+                int x = int.Parse(_reader.GetAttribute("X"));
+                int y = int.Parse(_reader.GetAttribute("Y"));
+                tiles[x, y].ReadXml(_reader);
+            } while (_reader.ReadToNextSibling("Tile"));
+            
         }
     }
 
     void ReadXml_InstalledObjects(XmlReader _reader)
     {
         //We are in the InstalledObjects element, read it's descendant elements named InstalledObject until we run out
-        while (_reader.Read())
+
+
+
+        if (_reader.ReadToDescendant("InstalledObject"))
         {
-            if (_reader.Name != "InstalledObject")
-                return; //we are out of installedObjects
+            do
+            {
+                //Read X and Y attributes of the Tile element
+                int x = int.Parse(_reader.GetAttribute("X"));
+                int y = int.Parse(_reader.GetAttribute("Y"));
 
-            //Read X and Y attributes of the Tile element
-            int x = int.Parse(_reader.GetAttribute("X"));
-            int y = int.Parse(_reader.GetAttribute("Y"));
-
-            InstalledObject inObj = PlaceInstalledObject(_reader.GetAttribute("ObjectType"), tiles[x,y]);
-            //Things like movementCost or health set in the inObj's ReadXml
-            inObj.ReadXml(_reader);
+                InstalledObject inObj = PlaceInstalledObject(_reader.GetAttribute("ObjectType"), tiles[x, y]);
+                //Things like movementCost or health set in the inObj's ReadXml
+                inObj.ReadXml(_reader);
+            }
+            while (_reader.ReadToNextSibling("InstalledObject"));
         }
     }
     void ReadXml_Characters(XmlReader _reader)
     {
         //We are in the Characters element, read it's descendant elements named Character until we run out
-        while (_reader.Read())
+        if (_reader.ReadToDescendant("Character"))
         {
-            if (_reader.Name != "Character")
-                return; //we are out of characters
+            do
+            {
+                //Read X and Y attributes of the Character element
+                int x = int.Parse(_reader.GetAttribute("X"));
+                int y = int.Parse(_reader.GetAttribute("Y"));
 
-            //Read X and Y attributes of the Character element
-            int x = int.Parse(_reader.GetAttribute("X"));
-            int y = int.Parse(_reader.GetAttribute("Y"));
-
-            Character c = CreateCharacter(tiles[x, y]);
-            //Things like health set in c's ReadXml
-            c.ReadXml(_reader);
+                Character c = CreateCharacter(tiles[x, y]);
+                //Things like health set in c's ReadXml
+                c.ReadXml(_reader);
+            }
+            while (_reader.ReadToNextSibling("Character"));
         }
     }
 }
