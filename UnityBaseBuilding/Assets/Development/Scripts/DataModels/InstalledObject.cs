@@ -42,7 +42,7 @@ public class InstalledObject : IXmlSerializable {
     public InstalledObject()
     {
         //Empty constructor used for Xml serialization
-        inObjParameters = new Dictionary<string, object>();
+        inObjParameters = new Dictionary<string, float>();
     }
 
     protected InstalledObject(InstalledObject _other)
@@ -53,7 +53,7 @@ public class InstalledObject : IXmlSerializable {
         height = _other.height;
         LinksToNeighbour = _other.LinksToNeighbour;
 
-        inObjParameters = new Dictionary<string, object>(_other.inObjParameters);
+        inObjParameters = new Dictionary<string, float>(_other.inObjParameters);
 
         if(_other.updateActions != null)
             updateActions = (Action<InstalledObject, float>)_other.updateActions.Clone();
@@ -75,7 +75,7 @@ public class InstalledObject : IXmlSerializable {
 
         funcPositionValidation = _IsValidPosition;
 
-        inObjParameters = new Dictionary<string, object>();
+        inObjParameters = new Dictionary<string, float>();
     }
 
     public void Update(float _deltaTime)
@@ -202,7 +202,7 @@ public class InstalledObject : IXmlSerializable {
         _writer.WriteAttributeString("X", Tile.X.ToString());
         _writer.WriteAttributeString("Y", Tile.Y.ToString());
         _writer.WriteAttributeString("ObjectType", ObjectType);
-        _writer.WriteAttributeString("MovementCost", MovementCost.ToString());
+        //_writer.WriteAttributeString("MovementCost", MovementCost.ToString());
 
         foreach (string k in inObjParameters.Keys)
         {
@@ -216,11 +216,18 @@ public class InstalledObject : IXmlSerializable {
     public void ReadXml(XmlReader _reader)
     {
         //X, Y, Tile and object type should have already been set in the World
-        MovementCost = int.Parse(_reader.GetAttribute("MovementCost"));
+        //MovementCost = int.Parse(_reader.GetAttribute("MovementCost"));
 
         if (_reader.ReadToDescendant("Param"))
         {
+            do
+            {
+                string k = _reader.GetAttribute("name");
+                float v = float.Parse(_reader.GetAttribute("value"));
+                inObjParameters[k] = v;
+            } while (_reader.ReadToNextSibling("Param"));
 
+            
         }
     }
 

@@ -109,7 +109,11 @@ public class Character : IXmlSerializable{
                     pathAStar = null;
                     return;
                 }
+                //ignore the first tile, it is what we're on
+            nextTile = pathAStar.Dequeue();
             }
+
+
             //Grab next waypoint
             nextTile = pathAStar.Dequeue();
             if(nextTile == currentTile)
@@ -127,8 +131,20 @@ public class Character : IXmlSerializable{
 
         //total distance from point A to point B
         float distanceToTravel = Mathf.Sqrt(Mathf.Pow(currentTile.X - nextTile.X, 2) + Mathf.Pow(currentTile.Y - nextTile.Y, 2));
+
+        if(nextTile.MovementCost == 0)
+        {
+            Debug.LogError("Character -- Update_DoMovement: A character tried to enter an unwalkable tile");
+            //the next tile shouldn't be walked on, so the path info is outdated and need to be updated
+            nextTile = null;
+            pathAStar = null;
+            return;
+        }
+
         //How much distance can we travel this update
-        float distanceThisFrame = speed * _deltaTime;
+        float distanceThisFrame = speed / nextTile.MovementCost * _deltaTime;
+
+
         //How mush is that in terms of percentage to our destination
         float percentageThisFrame = distanceThisFrame / distanceToTravel;
 

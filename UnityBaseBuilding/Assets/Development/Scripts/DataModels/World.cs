@@ -91,7 +91,7 @@ public class World : IXmlSerializable
         installedObjectPrototypes = new Dictionary<string, InstalledObject>();
         installedObjectPrototypes.Add("Wall", new InstalledObject("Wall", 0, 1, 1, true)); //The order is name, move cost, width, height, if it links to neighbors
 
-        installedObjectPrototypes.Add("Door", new InstalledObject("Door", 0, 1, 1, true)); //The order is name, move cost, width, height, if it links to neighbors
+        installedObjectPrototypes.Add("Door", new InstalledObject("Door", 1, 1, 1, false)); //The order is name, move cost, width, height, if it links to neighbors
 
         installedObjectPrototypes["Door"].inObjParameters["openess"] = 0;
         installedObjectPrototypes["Door"].updateActions += InstalledObjectActions.Door_UpdateAction;
