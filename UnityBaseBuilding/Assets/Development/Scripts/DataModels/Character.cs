@@ -135,10 +135,14 @@ public class Character : IXmlSerializable{
         if(nextTile.MovementCost == 0)
         {
             Debug.LogError("Character -- Update_DoMovement: A character tried to enter an unwalkable tile");
-            //the next tile shouldn't be walked on, so the path info is outdated and need to be updated
+            //the next tile shouldn't be walked on, so the path info is outdated and need to be updated (e.g. a wall was built here after the path was made)
             nextTile = null;
             pathAStar = null;
             return;
+        }
+        else
+        {
+            //The tile we are tring to enter is technically walkable (i.e. a wall), but are we actuallyt allowed to enter it right now (e.g. a closed door)?
         }
 
         //How much distance can we travel this update

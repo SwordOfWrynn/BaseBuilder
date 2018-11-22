@@ -145,6 +145,20 @@ public class Tile : IXmlSerializable{
 
     }
 
+    //e.g. a closed door that is walkable, but no right now
+    public bool isEnterable()
+    {
+        //returns true if you can enter the tile right this moment
+        if (MovementCost == 0)
+            return false;
+
+        //Check our installed object to see if it has something about its enterability
+
+        return true;
+    }
+
+
+
     public XmlSchema GetSchema()
     {
         return null;

@@ -89,9 +89,9 @@ public class World : IXmlSerializable
     protected void CreateInstalledObjectPrototypes()
     {
         installedObjectPrototypes = new Dictionary<string, InstalledObject>();
-        installedObjectPrototypes.Add("Wall", new InstalledObject("Wall", 0, 1, 1, true)); //The order is name, move cost, width, height, if it links to neighbors
+        installedObjectPrototypes.Add("Wall", new InstalledObject("Wall", 0, 1, 1, true)); //The order is name (Wall), move cost(0, which is impassable), width(1), height(1), if it links to neighbors(yes)
 
-        installedObjectPrototypes.Add("Door", new InstalledObject("Door", 1, 1, 1, false)); //The order is name, move cost, width, height, if it links to neighbors
+        installedObjectPrototypes.Add("Door", new InstalledObject("Door", 1, 1, 1, false)); //The order is name(Door), move cost(1, which is the normal speed), width(1), height(1), if it links to neighbors(No)
 
         installedObjectPrototypes["Door"].inObjParameters["openess"] = 0;
         installedObjectPrototypes["Door"].updateActions += InstalledObjectActions.Door_UpdateAction;
@@ -267,9 +267,12 @@ public class World : IXmlSerializable
         {
             for (int y = 0; y < Height; y++)
             {
-                _writer.WriteStartElement("Tile");
-                tiles[x, y].WriteXml(_writer);
-                _writer.WriteEndElement();
+                if (tiles[x, y].Type != TileType.Empty) //if the tile is empty, no need to save it (for now, things may change)
+                {
+                    _writer.WriteStartElement("Tile");
+                    tiles[x, y].WriteXml(_writer);
+                    _writer.WriteEndElement();
+                }
             }
         }
         _writer.WriteEndElement();
