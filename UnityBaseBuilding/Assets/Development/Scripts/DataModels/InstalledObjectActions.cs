@@ -9,4 +9,13 @@ public static class InstalledObjectActions {
 
     }
 
+    public static ENTERABILITY Door_IsEnterable(InstalledObject _inObj)
+    {
+        if(_inObj.inObjParameters["openess"] >= 1)
+        {
+            return ENTERABILITY.Yes;
+        }
+        return ENTERABILITY.Soon;
+    }
+
 }

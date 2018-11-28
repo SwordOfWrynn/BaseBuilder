@@ -13,6 +13,8 @@ using System.Xml.Serialization;
 //needing a reference to the Tile class
 public enum TileType { Empty, Floor };
 
+public enum ENTERABILITY { Yes, Never, Soon};
+
 public class Tile : IXmlSerializable{
 
 
@@ -146,15 +148,19 @@ public class Tile : IXmlSerializable{
     }
 
     //e.g. a closed door that is walkable, but no right now
-    public bool isEnterable()
+    public ENTERABILITY IsEnterable()
     {
         //returns true if you can enter the tile right this moment
         if (MovementCost == 0)
-            return false;
+            return ENTERABILITY.Never;
 
         //Check our installed object to see if it has something about its enterability
+        if(InstalledObject != null && InstalledObject.isEnterable != null)
+        {
+            return InstalledObject.isEnterable(InstalledObject);
+        }
 
-        return true;
+        return ENTERABILITY.Yes;
     }
 
 

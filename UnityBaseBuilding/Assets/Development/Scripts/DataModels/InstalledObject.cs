@@ -11,6 +11,7 @@ public class InstalledObject : IXmlSerializable {
     public Dictionary<string, float> inObjParameters;
     public Action<InstalledObject, float> updateActions;
 
+    public Func<InstalledObject ,ENTERABILITY> isEnterable; //a function that will take in an InstalledObject, and return a ENTERABILITY
 
     //this represents BASE tile of the object, large objects may occupy multipule tiles
     public Tile Tile { get; protected set; } 

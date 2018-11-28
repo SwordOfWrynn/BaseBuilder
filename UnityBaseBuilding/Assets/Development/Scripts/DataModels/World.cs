@@ -95,6 +95,8 @@ public class World : IXmlSerializable
 
         installedObjectPrototypes["Door"].inObjParameters["openess"] = 0;
         installedObjectPrototypes["Door"].updateActions += InstalledObjectActions.Door_UpdateAction;
+        installedObjectPrototypes["Door"].updateActions += InstalledObjectActions.Door_UpdateAction;
+        installedObjectPrototypes["Door"].isEnterable = 
     }
 
     public void RandomizeTiles()
