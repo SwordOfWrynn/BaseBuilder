@@ -16,10 +16,10 @@ public class JobSpriteController : MonoBehaviour {
 
 	}
 
-    void OnJobCreated(Job _j)
+    void OnJobCreated(Job _job)
     {
 
-        if (jobGameObjectMap.ContainsKey(_j))
+        if (jobGameObjectMap.ContainsKey(_job))
         {
             Debug.LogError("JobSpriteController -- OnJobCreated: Called for a job gameobject that already exists. Most likely from a job being re-queued, not one being created");
             return;
@@ -28,21 +28,38 @@ public class JobSpriteController : MonoBehaviour {
         GameObject job_GO = new GameObject();
 
         //add the Object/GameObject pair to dictionary
-        jobGameObjectMap.Add(_j, job_GO);
+        jobGameObjectMap.Add(_job, job_GO);
 
-        job_GO.name = "JOB_" + _j.jobObjectType + "_" + _j.Tile.X + "," + _j.Tile.Y;
-        job_GO.transform.position = new Vector3(_j.Tile.X, _j.Tile.Y, 0);
+        job_GO.name = "JOB_" + _job.jobObjectType + "_" + _job.Tile.X + "," + _job.Tile.Y;
+        job_GO.transform.position = new Vector3(_job.Tile.X, _job.Tile.Y, 0);
         job_GO.transform.SetParent(transform, true);
 
         //add a sprite renderer
         SpriteRenderer sr = job_GO.AddComponent<SpriteRenderer>();
-        sr.sprite = installedObjectSpriteController.GetSpriteForInstalledObject(_j.jobObjectType);
+        sr.sprite = installedObjectSpriteController.GetSpriteForInstalledObject(_job.jobObjectType);
         sr.sortingLayerName = "Jobs";
         //keep the green the same, but reduce the other colors and change the alpha to 25% to add transparency,
         sr.color = new Color(0.5f, 1f, 0.5f, 0.25f);
 
-        _j.RegisterJobCompleteCallback(OnJobEnded);
-        _j.RegisterJobCancelCallback(OnJobEnded);
+
+        if (_job.jobObjectType == "Door")
+        {
+            //By default, door graphic is made for walls to east/west, let check to see if there are walls north/south, and if so, rotate the GO
+
+            Tile northTile = _job.Tile.World.GetTileAt(_job.Tile.X, _job.Tile.Y + 1);
+            Tile southTile = _job.Tile.World.GetTileAt(_job.Tile.X, _job.Tile.Y - 1);
+            if (northTile != null && southTile != null && northTile.InstalledObject != null && southTile.InstalledObject != null
+                && northTile.InstalledObject.ObjectType == "Wall" && southTile.InstalledObject.ObjectType == "Wall")
+            {
+                job_GO.gameObject.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 90));
+                job_GO.gameObject.transform.Translate(1f, 0f, 0f, Space.World);
+            }
+
+        }
+
+
+        _job.RegisterJobCompleteCallback(OnJobEnded);
+        _job.RegisterJobCancelCallback(OnJobEnded);
 
     }
 

@@ -93,10 +93,11 @@ public class World : IXmlSerializable
 
         installedObjectPrototypes.Add("Door", new InstalledObject("Door", 1, 1, 1, false)); //The order is name(Door), move cost(1, which is the normal speed), width(1), height(1), if it links to neighbors(No)
 
-        installedObjectPrototypes["Door"].inObjParameters["openess"] = 0;
+        installedObjectPrototypes["Door"].inObjParameters["openness"] = 0;
+        installedObjectPrototypes["Door"].inObjParameters["is_opening"] = 0;
         installedObjectPrototypes["Door"].updateActions += InstalledObjectActions.Door_UpdateAction;
-        installedObjectPrototypes["Door"].updateActions += InstalledObjectActions.Door_UpdateAction;
-        installedObjectPrototypes["Door"].isEnterable = 
+
+        installedObjectPrototypes["Door"].isEnterable = InstalledObjectActions.Door_IsEnterable;
     }
 
     public void RandomizeTiles()

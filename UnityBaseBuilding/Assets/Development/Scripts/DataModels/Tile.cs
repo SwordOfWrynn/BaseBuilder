@@ -51,6 +51,8 @@ public class Tile : IXmlSerializable{
     public int X { get; protected set; }
     public int Y { get; protected set; }
 
+    const float baseTileMovementCost = 1;
+
     public float MovementCost
     {
         get
@@ -60,7 +62,7 @@ public class Tile : IXmlSerializable{
             if (InstalledObject == null)
                 return 1;
 
-            return 1 * InstalledObject.MovementCost;
+            return baseTileMovementCost * InstalledObject.MovementCost;
         }
 
     }
@@ -146,17 +148,16 @@ public class Tile : IXmlSerializable{
         return neighbourTiles;
 
     }
-
-    //e.g. a closed door that is walkable, but no right now
+    
     public ENTERABILITY IsEnterable()
     {
-        //returns true if you can enter the tile right this moment
         if (MovementCost == 0)
             return ENTERABILITY.Never;
 
         //Check our installed object to see if it has something about its enterability
         if(InstalledObject != null && InstalledObject.isEnterable != null)
         {
+            //if it does, use it
             return InstalledObject.isEnterable(InstalledObject);
         }
 

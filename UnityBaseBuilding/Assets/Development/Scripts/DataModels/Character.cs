@@ -75,14 +75,9 @@ public class Character : IXmlSerializable{
         }
 
         //if we are already there
-        if (currentTile == destinationTile)
-        //if(pathAStar != null && pathAStar.Length() == 1) //we are next to job site
+        if (myJob != null && currentTile == myJob.Tile)
         {
-            if (myJob != null)
-            {
-                myJob.DoWork(_deltaTime);
-            }
-            
+            myJob.DoWork(_deltaTime);
         }
     }
 
@@ -132,7 +127,7 @@ public class Character : IXmlSerializable{
         //total distance from point A to point B
         float distanceToTravel = Mathf.Sqrt(Mathf.Pow(currentTile.X - nextTile.X, 2) + Mathf.Pow(currentTile.Y - nextTile.Y, 2));
 
-        if(nextTile.MovementCost == 0)
+        if(nextTile.IsEnterable() == ENTERABILITY.Never)
         {
             Debug.LogError("Character -- Update_DoMovement: A character tried to enter an unwalkable tile");
             //the next tile shouldn't be walked on, so the path info is outdated and need to be updated (e.g. a wall was built here after the path was made)
@@ -140,9 +135,12 @@ public class Character : IXmlSerializable{
             pathAStar = null;
             return;
         }
-        else
+        else if(nextTile.IsEnterable() == ENTERABILITY.Soon)
         {
-            //The tile we are tring to enter is technically walkable (i.e. a wall), but are we actuallyt allowed to enter it right now (e.g. a closed door)?
+            //We can't enter the tile now, but we should be able to in the near future. This tile is likely a door, so we will return until the tile is enterable
+            //then we process the movement and move thrugh the tile
+
+            return;
         }
 
         //How much distance can we travel this update

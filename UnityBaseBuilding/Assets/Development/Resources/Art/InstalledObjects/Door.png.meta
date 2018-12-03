@@ -1,9 +1,13 @@
 fileFormatVersion: 2
-guid: 50e5fb45c7ae2654ea311c182462eded
+guid: 42371dc04faf35147a6d5a48dcd667c5
 TextureImporter:
   fileIDToRecycleName:
-    21300000: Door
-    21300002: Door_NS
+    8900000: generatedCubemap
+    21300000: Door_NS
+    21300002: Door
+    21300004: Door_openness_1
+    21300006: Door_openness_2
+    21300008: Door_openness_3
   externalObjects: {}
   serializedVersion: 4
   mipmaps:
@@ -36,7 +40,7 @@ TextureImporter:
     mipBias: -1
     wrapU: 1
     wrapV: 1
-    wrapW: 1
+    wrapW: -1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -91,13 +95,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Door
+      name: Door_NS
       rect:
         serializedVersion: 2
-        x: 32
-        y: 226
+        x: 128
+        y: 192
         width: 32
-        height: 28
+        height: 32
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -105,11 +109,53 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Door_NS
+      name: Door
       rect:
         serializedVersion: 2
-        x: 128
+        x: 32
+        y: 224
+        width: 32
+        height: 32
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Door_openness_1
+      rect:
+        serializedVersion: 2
+        x: 32
         y: 192
+        width: 32
+        height: 32
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Door_openness_2
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 160
+        width: 32
+        height: 32
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Door_openness_3
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 127
         width: 32
         height: 32
       alignment: 6

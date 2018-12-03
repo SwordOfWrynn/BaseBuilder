@@ -11,7 +11,7 @@ public class InstalledObject : IXmlSerializable {
     public Dictionary<string, float> inObjParameters;
     public Action<InstalledObject, float> updateActions;
 
-    public Func<InstalledObject ,ENTERABILITY> isEnterable; //a function that will take in an InstalledObject, and return a ENTERABILITY
+    public Func<InstalledObject, ENTERABILITY> isEnterable; //a function that will take in an InstalledObject, and return a ENTERABILITY
 
     //this represents BASE tile of the object, large objects may occupy multipule tiles
     public Tile Tile { get; protected set; } 
@@ -36,7 +36,7 @@ public class InstalledObject : IXmlSerializable {
     //if it connects to nearby object of the same kind, like walls or pipes
     public bool LinksToNeighbour { get; protected set; }
 
-    Action<InstalledObject> cbOnChanged;
+    public Action<InstalledObject> cbOnChanged;
     //Func is like an action, but will return something, in this case a boolean
     Func<Tile, bool> funcPositionValidation;
 
@@ -58,6 +58,8 @@ public class InstalledObject : IXmlSerializable {
 
         if(_other.updateActions != null)
             updateActions = (Action<InstalledObject, float>)_other.updateActions.Clone();
+
+        isEnterable = _other.isEnterable;
     }
 
     virtual public InstalledObject Clone ()
