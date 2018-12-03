@@ -24,10 +24,8 @@ public class InstalledObject : IXmlSerializable {
     //e.g. moving through a tile with a cost of 2 with a InstalledObject with a cost of 3, that is on fire with has 3 cost
     //would have total cost of 8, so you'd move at 1/8 speed
     //SPECIAL: if movementCost = 0, then tile cannot be moved through
-    public float MovementCost
-    {
-        get; protected set;
-    }
+    public float MovementCost{ get; protected set; }
+    public bool roomEnclosure { get; protected set; }
 
     //For example, a sofa may 3x2, but the graphic only covers 3x1, so there is leg room
     int width;
@@ -50,6 +48,7 @@ public class InstalledObject : IXmlSerializable {
     {
         ObjectType = _other.ObjectType;
         MovementCost = _other.MovementCost;
+        roomEnclosure = _other.roomEnclosure;
         width = _other.width;
         height = _other.height;
         LinksToNeighbour = _other.LinksToNeighbour;
@@ -68,10 +67,11 @@ public class InstalledObject : IXmlSerializable {
     }
 
     //this will be used to create the prototypical objects in the code that the real ones will be copied from
-    public InstalledObject (string _objectType, float _movementCost = 1f, int _width = 1, int _height = 1, bool _linksToNeighbour = false)
+    public InstalledObject (string _objectType, float _movementCost = 1f, int _width = 1, int _height = 1, bool _linksToNeighbour = false, bool _roomEnclosure = false)
     {
         ObjectType = _objectType;
         MovementCost = _movementCost;
+        roomEnclosure = _roomEnclosure;
         width = _width;
         height = _height;
         LinksToNeighbour = _linksToNeighbour;

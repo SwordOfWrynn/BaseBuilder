@@ -11,6 +11,7 @@ public class World : IXmlSerializable
 
     public List<Character> characters;
     public List<InstalledObject> installedObjects;
+    public List<Room> rooms;
 
     //the pathfinding graph used to navigate world
     public Path_TileGraph tileGraph;
@@ -60,6 +61,7 @@ public class World : IXmlSerializable
 
         characters = new List<Character>();
         installedObjects = new List<InstalledObject>();
+        rooms = new List<Room>();
     }
 
     public void Update(float _deltaTime)
@@ -89,9 +91,9 @@ public class World : IXmlSerializable
     protected void CreateInstalledObjectPrototypes()
     {
         installedObjectPrototypes = new Dictionary<string, InstalledObject>();
-        installedObjectPrototypes.Add("Wall", new InstalledObject("Wall", 0, 1, 1, true)); //The order is name (Wall), move cost(0, which is impassable), width(1), height(1), if it links to neighbors(yes)
+        installedObjectPrototypes.Add("Wall", new InstalledObject("Wall", 0, 1, 1, true, true)); //The order is name (Wall), move cost(0, which is impassable), width(1), height(1), if it links to neighbors(yes), if it can enclose a room(yes)
 
-        installedObjectPrototypes.Add("Door", new InstalledObject("Door", 1, 1, 1, false)); //The order is name(Door), move cost(1, which is the normal speed), width(1), height(1), if it links to neighbors(No)
+        installedObjectPrototypes.Add("Door", new InstalledObject("Door", 1, 1, 1, false, true)); //The order is name(Door), move cost(1, which is the normal speed), width(1), height(1), if it links to neighbors(No), if it can enclose a room(yes)
 
         installedObjectPrototypes["Door"].inObjParameters["openness"] = 0;
         installedObjectPrototypes["Door"].inObjParameters["is_opening"] = 0;
@@ -146,10 +148,21 @@ public class World : IXmlSerializable
 
         installedObjects.Add(inObj);
 
+        //Do we need to recalc rooms?
+        if (inObj.roomEnclosure)
+        {
+
+        }
+
         if(cbInstalledObjectCreated != null)
         {
             cbInstalledObjectCreated(inObj);
-            InvalidateTileGraph();
+
+            if (inObj.MovementCost != 1)
+            {
+                //Since a furniture movement cost of 1 won't change the pathfinding system
+                InvalidateTileGraph(); //reset pathfinding system
+            }
         }
 
         return inObj;
