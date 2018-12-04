@@ -43,6 +43,9 @@ public class Tile : IXmlSerializable{
 
 
     Inventory inventory;
+
+    public Room room;
+
     public InstalledObject InstalledObject { get; protected set; }
 
     public Job pendingInstalledObjectJob;

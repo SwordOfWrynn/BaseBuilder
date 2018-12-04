@@ -47,21 +47,27 @@ public class World : IXmlSerializable
  
         tiles = new Tile[_width, _height];
 
+        rooms = new List<Room>();
+        rooms.Add(new Room()); //create the outside
+
         for (int x = 0; x < _width; x++)
         {
             for (int y = 0; y < _height; y++)
             {
                 tiles[x, y] = new Tile(this, x, y);
                 tiles[x, y].RegisterTileTypeChangedCallback(OnTileChanged);
+                tiles[x, y].room = GetOutsideRoom(); //rooms[0] will always be the outside, and that is the default room
             }
         }
+
         Debug.Log("World created with " + (_width * _height) + " tiles");
 
         CreateInstalledObjectPrototypes();
 
         characters = new List<Character>();
         installedObjects = new List<InstalledObject>();
-        rooms = new List<Room>();
+
+
     }
 
     public void Update(float _deltaTime)
@@ -74,6 +80,23 @@ public class World : IXmlSerializable
         {
             inObj.Update(_deltaTime);
         }
+    }
+
+    public Room GetOutsideRoom()
+    {
+        return rooms[0];
+    }
+
+    public void DeleteRoom(Room _room)
+    {
+        if(_room == GetOutsideRoom())
+        {
+            Debug.LogError("World -- DeleteRoom: Tried to delete the outside room");
+            return;
+        }
+
+        _room.UnAssignAllTiles();
+        rooms.Remove(_room);
     }
     
     public Character CreateCharacter(Tile _tile)
@@ -151,7 +174,7 @@ public class World : IXmlSerializable
         //Do we need to recalc rooms?
         if (inObj.roomEnclosure)
         {
-
+            Room.DoRoomFloodFill(inObj);
         }
 
         if(cbInstalledObjectCreated != null)
