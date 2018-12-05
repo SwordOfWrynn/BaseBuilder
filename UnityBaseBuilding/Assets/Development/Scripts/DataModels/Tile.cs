@@ -151,7 +151,24 @@ public class Tile : IXmlSerializable{
         return neighbourTiles;
 
     }
-    
+
+    public Tile North()
+    {
+        return World.GetTileAt(X, Y + 1);
+    }
+    public Tile East()
+    {
+        return World.GetTileAt(X + 1, Y);
+    }
+    public Tile South()
+    {
+        return World.GetTileAt(X, Y - 1);
+    }
+    public Tile West()
+    {
+        return World.GetTileAt(X - 1, Y);
+    }
+
     public ENTERABILITY IsEnterable()
     {
         if (MovementCost == 0)

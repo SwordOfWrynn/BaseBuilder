@@ -94,9 +94,10 @@ public class World : IXmlSerializable
             Debug.LogError("World -- DeleteRoom: Tried to delete the outside room");
             return;
         }
-
-        _room.UnAssignAllTiles();
+        //Remove the room from the rooms list
         rooms.Remove(_room);
+        //all tiles belonging to the room should be reassigned to the outside
+        _room.UnAssignAllTiles();
     }
     
     public Character CreateCharacter(Tile _tile)
