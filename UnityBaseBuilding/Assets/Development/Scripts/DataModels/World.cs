@@ -87,6 +87,11 @@ public class World : IXmlSerializable
         return rooms[0];
     }
 
+    public void AddRoom(Room _room)
+    {
+        rooms.Add(_room);
+    }
+
     public void DeleteRoom(Room _room)
     {
         if(_room == GetOutsideRoom())
