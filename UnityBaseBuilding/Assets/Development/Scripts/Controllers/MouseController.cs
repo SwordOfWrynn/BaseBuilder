@@ -126,4 +126,18 @@ public class MouseController : MonoBehaviour {
         Camera.main.orthographicSize -= Camera.main.orthographicSize * Input.GetAxis("Mouse ScrollWheel");
         Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, 3f, 25f );
     }
+
+    /// <summary>
+    /// Gets the mouse position in world space.
+    /// </summary>
+    public Vector3 GetMousePosition()
+    {
+        return currentFramePos;
+    }
+
+    public Tile MouseOverTile()
+    {
+        return WorldController.Instance.world.GetTileAt(currentFramePos.x, currentFramePos.y);
+    }
+
 }
