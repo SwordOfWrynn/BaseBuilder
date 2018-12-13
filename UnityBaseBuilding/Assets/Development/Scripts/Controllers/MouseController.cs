@@ -137,7 +137,7 @@ public class MouseController : MonoBehaviour {
 
     public Tile MouseOverTile()
     {
-        return WorldController.Instance.world.GetTileAt(currentFramePos.x, currentFramePos.y);
+        return WorldController.Instance.world.GetTileAt(Mathf.FloorToInt(currentFramePos.x), Mathf.FloorToInt(currentFramePos.y));
     }
 
 }

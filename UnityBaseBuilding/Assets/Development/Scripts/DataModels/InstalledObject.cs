@@ -8,8 +8,8 @@ using System.Xml.Serialization;
 //InstalledObjects are things like walls, doors, furniture, etc.
 public class InstalledObject : IXmlSerializable {
 
-    public Dictionary<string, float> inObjParameters;
-    public Action<InstalledObject, float> updateActions;
+    protected Dictionary<string, float> inObjParameters;
+    protected Action<InstalledObject, float> updateActions;
 
     public Func<InstalledObject, ENTERABILITY> isEnterable; //a function that will take in an InstalledObject, and return a ENTERABILITY
 
@@ -79,14 +79,6 @@ public class InstalledObject : IXmlSerializable {
         funcPositionValidation = _IsValidPosition;
 
         inObjParameters = new Dictionary<string, float>();
-    }
-
-    public void Update(float _deltaTime)
-    {
-        if(updateActions != null)
-        {
-            updateActions(this, _deltaTime);
-        }
     }
 
     //takes the prototype and a tile and creates the actual object
@@ -193,6 +185,29 @@ public class InstalledObject : IXmlSerializable {
         //make sure there is a pair off E/W walls, or N/S walls
 
         return true;
+    }
+
+
+    public void Update(float _deltaTime)
+    {
+        if (updateActions != null)
+        {
+            updateActions(this, _deltaTime);
+        }
+    }
+
+    public float GetParameter(string _key, float _default_value = 0)
+    {
+        if (inObjParameters.ContainsKey(_key) == false)
+        {
+            return _default_value;
+        }
+
+        return inObjParameters[_key];
+    }
+    public void SetParameter(string _key, float _value)
+    {
+        inObjParameters[_key] = _value;
     }
 
     public XmlSchema GetSchema()

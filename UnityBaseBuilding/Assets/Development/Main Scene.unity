@@ -362,7 +362,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Tile Type: Empty'
+  m_Text: 'Tile Type: Null'
 --- !u!222 &303629268
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -729,6 +729,7 @@ GameObject:
   - component: {fileID: 963275057}
   - component: {fileID: 963275059}
   - component: {fileID: 963275058}
+  - component: {fileID: 963275060}
   m_Layer: 5
   m_Name: InstalledObjectTypeText
   m_TagString: Untagged
@@ -793,6 +794,17 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 963275056}
+--- !u!114 &963275060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 963275056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9eac3e410993e2143a9a266ecd616727, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &989902752
 GameObject:
   m_ObjectHideFlags: 0
@@ -2074,6 +2086,7 @@ GameObject:
   - component: {fileID: 1743296586}
   - component: {fileID: 1743296588}
   - component: {fileID: 1743296587}
+  - component: {fileID: 1743296589}
   m_Layer: 5
   m_Name: RoomIndexText
   m_TagString: Untagged
@@ -2131,13 +2144,24 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Room Index: 0000'
+  m_Text: 'Room Index: -000'
 --- !u!222 &1743296588
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1743296585}
+--- !u!114 &1743296589
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1743296585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb3ea5acda483cc44a7a46bd8b370ba9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1779574524
 GameObject:
   m_ObjectHideFlags: 0

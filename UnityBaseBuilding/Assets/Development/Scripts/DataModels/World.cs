@@ -35,7 +35,7 @@ public class World : IXmlSerializable
         SetUpWorld(_width, _height);
 
         //create a character
-        Character c = CreateCharacter(GetTileAt(Width / 2, Height / 2));
+        CreateCharacter(GetTileAt(Width / 2, Height / 2));
     }
 
     void SetUpWorld(int _width, int _height)

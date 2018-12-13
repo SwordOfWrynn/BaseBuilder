@@ -96,17 +96,17 @@ public class InstalledObjectSpriteController : MonoBehaviour {
             //if this is a door check openness and update sprite
             if (_inObj.ObjectType == "Door")
             {
-                if (_inObj.inObjParameters["openness"] < 0.1f)
+                if (_inObj.GetParameter("openness") < 0.1f)
                 {
                     //Door is closed
                     spriteName = "Door";
                 }
-                else if (_inObj.inObjParameters["openness"] < 0.5f)
+                else if (_inObj.GetParameter("openness") < 0.5f)
                 {
                     //Door is open a little bit
                     spriteName = "Door_openness_1";
                 }
-                else if (_inObj.inObjParameters["openness"] < 0.9f)
+                else if (_inObj.GetParameter("openness") < 0.9f)
                 {
                     //Door is almost entirely open
                     spriteName = "Door_openness_2";
