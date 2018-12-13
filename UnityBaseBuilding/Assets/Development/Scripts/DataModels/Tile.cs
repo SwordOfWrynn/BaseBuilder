@@ -106,6 +106,38 @@ public class Tile : IXmlSerializable{
         return true;
     }
 
+    public bool PlaceInventory(Inventory _inv)
+    {
+        if(_inv == null) //we are removing inventory
+        {
+            inventory = null;
+            return true;
+        }
+        //There is alrady inventory here. If it's the same type we may be able to combine it
+        if(inventory == null)
+        {
+            if (inventory.objectType != _inv.objectType)
+            {
+                Debug.LogError("Trying to assign inventiry to a tile that already has Inventory of a diiferent type!");
+                return false;
+            }
+
+            if(inventory.stackSize + _inv.stackSize > _inv.maxStackSize)
+            {
+                Debug.LogError("Trying to assign inventiry to a tile that would exceed max stack size");
+                return false;
+            }
+
+            //if we are here, the stacks can be combined
+            inventory.stackSize += _inv.stackSize;
+            return true;
+
+        }
+
+        inventory = _inv;
+        return true;
+    }
+
     //tells us if two tiles are adjacent
     public bool isNeighboor(Tile _tile, bool diagonalOkay = false)
     {

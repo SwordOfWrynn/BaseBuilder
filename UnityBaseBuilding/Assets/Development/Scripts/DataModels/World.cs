@@ -12,6 +12,7 @@ public class World : IXmlSerializable
     public List<Character> characters;
     public List<InstalledObject> installedObjects;
     public List<Room> rooms;
+    public List<Inventory> inventoryStacks;
 
     //the pathfinding graph used to navigate world
     public Path_TileGraph tileGraph;
@@ -66,7 +67,7 @@ public class World : IXmlSerializable
 
         characters = new List<Character>();
         installedObjects = new List<InstalledObject>();
-
+        inventoryStacks = new List<Inventory>();
 
     }
 
@@ -124,9 +125,9 @@ public class World : IXmlSerializable
 
         installedObjectPrototypes.Add("Door", new InstalledObject("Door", 1, 1, 1, false, true)); //The order is name(Door), move cost(1, which is the normal speed), width(1), height(1), if it links to neighbors(No), if it can enclose a room(yes)
 
-        installedObjectPrototypes["Door"].inObjParameters["openness"] = 0;
-        installedObjectPrototypes["Door"].inObjParameters["is_opening"] = 0;
-        installedObjectPrototypes["Door"].updateActions += InstalledObjectActions.Door_UpdateAction;
+        installedObjectPrototypes["Door"].SetParameter("openness", 0);
+        installedObjectPrototypes["Door"].SetParameter("is_opening", 0);
+        installedObjectPrototypes["Door"].RegisterUpdateAction(InstalledObjectActions.Door_UpdateAction);
 
         installedObjectPrototypes["Door"].isEnterable = InstalledObjectActions.Door_IsEnterable;
     }
@@ -290,6 +291,7 @@ public class World : IXmlSerializable
 
     //Saving and Loading
 
+        //default constructor used when loading world from a file
     public World()
     {
 
@@ -369,6 +371,12 @@ public class World : IXmlSerializable
                     break;
             }
         }
+
+        //Debuging only
+
+        Inventory inv = new Inventory();
+        inventoryStacks.Add(inv);
+
     }
 
     void ReadXml_Tiles(XmlReader _reader)

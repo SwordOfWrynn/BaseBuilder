@@ -8,7 +8,9 @@ using System.Xml.Serialization;
 //InstalledObjects are things like walls, doors, furniture, etc.
 public class InstalledObject : IXmlSerializable {
 
+    //custom parameters for this installed object. We are usins a dictionary so custom LUA functions will be able to use whatever parameters they want
     protected Dictionary<string, float> inObjParameters;
+    //These actions are called every update. They are passed the InstalledObject they belong to and a delta time
     protected Action<InstalledObject, float> updateActions;
 
     public Func<InstalledObject, ENTERABILITY> isEnterable; //a function that will take in an InstalledObject, and return a ENTERABILITY
@@ -44,6 +46,7 @@ public class InstalledObject : IXmlSerializable {
         inObjParameters = new Dictionary<string, float>();
     }
 
+    //copy constructor, Don't call this directly, unless we never do subclassing, instead use Clone(), which is more virtual
     protected InstalledObject(InstalledObject _other)
     {
         ObjectType = _other.ObjectType;
@@ -60,7 +63,7 @@ public class InstalledObject : IXmlSerializable {
 
         isEnterable = _other.isEnterable;
     }
-
+    //make a copy of the current installedobject subclasses should override the clone if a different copy constructor should be run
     virtual public InstalledObject Clone ()
     {
         return new InstalledObject(this);
@@ -76,7 +79,7 @@ public class InstalledObject : IXmlSerializable {
         height = _height;
         LinksToNeighbour = _linksToNeighbour;
 
-        funcPositionValidation = _IsValidPosition;
+        funcPositionValidation = Default_IsValidPosition;
 
         inObjParameters = new Dictionary<string, float>();
     }
@@ -160,7 +163,7 @@ public class InstalledObject : IXmlSerializable {
         return funcPositionValidation(_t);
     }
 
-    public bool _IsValidPosition(Tile _tile)
+    protected bool Default_IsValidPosition(Tile _tile)
     {
         //make sure tile is floor
         if(_tile.Type != TileType.Floor)
@@ -172,17 +175,6 @@ public class InstalledObject : IXmlSerializable {
         {
             return false;
         }
-
-        return true;
-    }
-
-    public bool _IsValidPosition_Door(Tile _tile)
-    {
-        if (_IsValidPosition(_tile) == false)
-        {
-            return false;
-        }
-        //make sure there is a pair off E/W walls, or N/S walls
 
         return true;
     }
@@ -208,6 +200,24 @@ public class InstalledObject : IXmlSerializable {
     public void SetParameter(string _key, float _value)
     {
         inObjParameters[_key] = _value;
+    }
+
+    public void ChangeParameter(string _key, float _value)
+    {
+        if (inObjParameters.ContainsKey(_key) == false)
+        {
+            inObjParameters[_key] = _value;
+        }
+        inObjParameters[_key] += _value;
+    }
+    //register a function that will be called every update
+    public void RegisterUpdateAction(Action<InstalledObject, float> _action)
+    {
+        updateActions += _action;
+    }
+    public void UnregisterUpdateAction(Action<InstalledObject, float> _action)
+    {
+        updateActions -= _action;
     }
 
     public XmlSchema GetSchema()

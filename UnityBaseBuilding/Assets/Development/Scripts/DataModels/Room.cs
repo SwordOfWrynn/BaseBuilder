@@ -129,6 +129,12 @@ public class Room {
 
             }
         }
+        //copy data from old room to new room
+        newRoom.atmosCO2 = _oldRoom.atmosCO2;
+        newRoom.atmosN = _oldRoom.atmosN;
+        newRoom.atmosO2 = _oldRoom.atmosO2;
+
+
         //Tell world new room has benn formed
         _tile.World.AddRoom(newRoom);
 
