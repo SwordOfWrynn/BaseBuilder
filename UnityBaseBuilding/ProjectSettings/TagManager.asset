@@ -47,6 +47,9 @@ TagManager:
   - name: InstalledObjects
     uniqueID: 2678358963
     locked: 0
+  - name: Inventory
+    uniqueID: 2863253707
+    locked: 0
   - name: Characters
     uniqueID: 985961611
     locked: 0

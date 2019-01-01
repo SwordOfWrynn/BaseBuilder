@@ -12,7 +12,7 @@ public class World : IXmlSerializable
     public List<Character> characters;
     public List<InstalledObject> installedObjects;
     public List<Room> rooms;
-    public List<Inventory> inventoryStacks;
+    public InventoryManager inventoryManager;
 
     //the pathfinding graph used to navigate world
     public Path_TileGraph tileGraph;
@@ -26,6 +26,7 @@ public class World : IXmlSerializable
     //a list of functions to be called on InstalledObject creation
     Action<InstalledObject> cbInstalledObjectCreated;
     Action<Character> cbCharacterCreated;
+    Action<Inventory> cbInventoryCreated;
     Action<Tile> cbTileChanged;
 
     public JobQueue jobQueue;
@@ -67,7 +68,7 @@ public class World : IXmlSerializable
 
         characters = new List<Character>();
         installedObjects = new List<InstalledObject>();
-        inventoryStacks = new List<Inventory>();
+        inventoryManager = new InventoryManager();
 
     }
 
@@ -213,6 +214,14 @@ public class World : IXmlSerializable
     public void UnRegisterCharacterCreated(Action<Character> _callbackFunction)
     {
         cbCharacterCreated -= _callbackFunction;
+    }
+    public void RegisterInventoryCreated(Action<Inventory> _callbackFunction)
+    {
+        cbInventoryCreated += _callbackFunction;
+    }
+    public void UnRegisterInventoryCreated(Action<Inventory> _callbackFunction)
+    {
+        cbInventoryCreated -= _callbackFunction;
     }
     public void RegisterTileChanged(Action<Tile> _callbackFunction)
     {
@@ -372,10 +381,20 @@ public class World : IXmlSerializable
             }
         }
 
-        //Debuging only
-
+        //Debugging only
         Inventory inv = new Inventory();
-        inventoryStacks.Add(inv);
+        inv.stackSize = 50;
+        Tile t = GetTileAt(Width / 2, Height / 2);
+        inventoryManager.PlaceInventory(t, inv);
+        if (cbInventoryCreated != null)
+            cbInventoryCreated(t.Inventory);
+
+        inv = new Inventory();
+        inv.stackSize = 23;
+        t = GetTileAt(Width / 2 + 2, Height / 2);
+        inventoryManager.PlaceInventory(t, inv);
+        if (cbInventoryCreated != null)
+            cbInventoryCreated(t.Inventory);
 
     }
 

@@ -18,7 +18,7 @@ public static class InstalledObjectActions {
         }
         else
         {
-            _inObj.ChangeParameter("openness", _deltaTime * 4);
+            _inObj.ChangeParameter("openness", -_deltaTime * 4);
         }
 
         _inObj.SetParameter("openness",Mathf.Clamp01(_inObj.GetParameter("openness")));

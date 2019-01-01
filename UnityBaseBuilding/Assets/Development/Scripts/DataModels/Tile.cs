@@ -42,7 +42,7 @@ public class Tile : IXmlSerializable{
     }
 
 
-    Inventory inventory;
+    public Inventory Inventory { get; protected set; }
 
     public Room room;
 
@@ -110,31 +110,36 @@ public class Tile : IXmlSerializable{
     {
         if(_inv == null) //we are removing inventory
         {
-            inventory = null;
+            Inventory = null;
             return true;
         }
         //There is alrady inventory here. If it's the same type we may be able to combine it
-        if(inventory == null)
+        if(Inventory != null)
         {
-            if (inventory.objectType != _inv.objectType)
+            if (Inventory.objectType != _inv.objectType)
             {
-                Debug.LogError("Trying to assign inventiry to a tile that already has Inventory of a diiferent type!");
+                Debug.LogError("Trying to assign inventiry to a tile that already has Inventory of a different type!");
                 return false;
             }
 
-            if(inventory.stackSize + _inv.stackSize > _inv.maxStackSize)
+            int amoutToMove = _inv.stackSize;
+            if(Inventory.stackSize + amoutToMove > Inventory.maxStackSize)
             {
-                Debug.LogError("Trying to assign inventiry to a tile that would exceed max stack size");
-                return false;
+                amoutToMove = Inventory.maxStackSize - _inv.stackSize;
             }
+            Inventory.stackSize += amoutToMove;
+            _inv.stackSize -= amoutToMove;
 
-            //if we are here, the stacks can be combined
-            inventory.stackSize += _inv.stackSize;
             return true;
 
         }
+        //At this point we know the current inventory is null.We can't do a direct assignment because the inventory manager
+        //needs to know the old stack is empty and should be removed
 
-        inventory = _inv;
+        Inventory = _inv.Clone();
+        Inventory.tile = this;
+        _inv.stackSize = 0;
+
         return true;
     }
 
