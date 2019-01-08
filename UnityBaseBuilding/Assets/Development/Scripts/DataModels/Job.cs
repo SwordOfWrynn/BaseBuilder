@@ -14,13 +14,24 @@ public class Job {
 
     Action<Job> cbJobComplete;
     Action<Job> cbJobCancelled;
+
+    Dictionary<string, Inventory> inventoryRequirments; //the max stack size of inventory in this dictionary is the required amount
     
-    public Job(Tile _tile, string _jobObjectType, Action<Job> _cbJobComplete, float _jobTime = 0.1f)
+    public Job(Tile _tile, string _jobObjectType, Action<Job> _cbJobComplete, float _jobTime, Inventory[] _inventoryRequirments)
     {
         Tile = _tile;
         cbJobComplete += _cbJobComplete;
         jobObjectType = _jobObjectType;
         jobTime = _jobTime;
+
+        inventoryRequirments = new Dictionary<string, Inventory>();
+        if (_inventoryRequirments != null) //if no material is needed, null will be passed in for requirments
+        {
+            foreach (Inventory inv in _inventoryRequirments)
+            {
+                inventoryRequirments[inv.objectType] = inv.Clone();
+            }
+        }
     }
 
     public void DoWork(float _workTime)

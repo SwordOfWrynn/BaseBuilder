@@ -58,7 +58,6 @@ public class InstalledObjectSpriteController : MonoBehaviour {
                 && northTile.InstalledObject.ObjectType == "Wall" && southTile.InstalledObject.ObjectType == "Wall")
             {
                 inObj_GO.gameObject.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 90));
-                inObj_GO.gameObject.transform.Translate(1f, 0f, 0f, Space.World);
             }
 
         }

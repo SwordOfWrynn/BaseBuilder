@@ -47,7 +47,8 @@ public class BuildModeController : MonoBehaviour {
                 {
                     WorldController.Instance.world.PlaceInstalledObject(installedObjectType, theJob.Tile);
                     _t.pendingInstalledObjectJob = null;
-                }
+                },
+                    0.1f, null
                 );
 
                 _t.pendingInstalledObjectJob = j;

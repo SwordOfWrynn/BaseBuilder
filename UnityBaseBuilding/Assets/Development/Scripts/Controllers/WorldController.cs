@@ -39,8 +39,8 @@ public class WorldController : MonoBehaviour {
     //returns the tile at the given coordinates
     public Tile GetTileAtWorldCoord(Vector3 _coord)
     {
-        int x = Mathf.FloorToInt(_coord.x);
-        int y = Mathf.FloorToInt(_coord.y);
+        int x = Mathf.FloorToInt(_coord.x + 0.5f); //The mouse is half a tile off without this -0.5
+        int y = Mathf.FloorToInt(_coord.y + 0.5f);
 
         return world.GetTileAt(x, y);
     }

@@ -51,22 +51,26 @@ public class MouseController : MonoBehaviour {
             dragStartPos = currentFramePos;
         }
 
-        int start_x = Mathf.FloorToInt(dragStartPos.x);
-        int end_x = Mathf.FloorToInt(currentFramePos.x);
+        int start_x = Mathf.FloorToInt(dragStartPos.x + 0.5f);
+        int end_x = Mathf.FloorToInt(currentFramePos.x + 0.5f);
+
         if (end_x < start_x)
         {
             int tmp = end_x;
             end_x = start_x;
             start_x = tmp;
         }
-        int start_y = Mathf.FloorToInt(dragStartPos.y);
-        int end_y = Mathf.FloorToInt(currentFramePos.y);
+
+        int start_y = Mathf.FloorToInt(dragStartPos.y + 0.5f);
+        int end_y = Mathf.FloorToInt(currentFramePos.y + 0.5f);
+
         if (end_y < start_y)
         {
             int tmp = end_y;
             end_y = start_y;
             start_y = tmp;
         }
+
         //clean up old previews each frame
         while (dragPreviewGameObjects.Count > 0)
         {
@@ -137,7 +141,7 @@ public class MouseController : MonoBehaviour {
 
     public Tile MouseOverTile()
     {
-        return WorldController.Instance.world.GetTileAt(Mathf.FloorToInt(currentFramePos.x), Mathf.FloorToInt(currentFramePos.y));
+        return WorldController.Instance.GetTileAtWorldCoord( currentFramePos );
     }
 
 }

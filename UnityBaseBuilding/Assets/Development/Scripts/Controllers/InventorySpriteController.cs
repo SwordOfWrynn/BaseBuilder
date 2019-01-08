@@ -1,8 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InventorySpriteController : MonoBehaviour{
+
+    public GameObject inventoryUIPrefab;
 
     //Keep track of characters and their GameObjects
     Dictionary<Inventory, GameObject> inventoryGameObjectMap;
@@ -56,6 +59,14 @@ public class InventorySpriteController : MonoBehaviour{
         SpriteRenderer sr = inv_GO.AddComponent<SpriteRenderer>();
         sr.sprite = inventorySprites[ _inv.objectType ];
         sr.sortingLayerName = "Inventory";
+
+        if(_inv.maxStackSize > 1) //this object is stackable, so add a UI component to show the stack size
+        {
+            GameObject ui_GO = Instantiate(inventoryUIPrefab);
+            ui_GO.transform.SetParent(inv_GO.transform);
+            ui_GO.transform.localPosition = Vector3.zero;
+            ui_GO.GetComponentInChildren<Text>().text = _inv.stackSize.ToString();
+        }
 
         //register callback so our GameObject gets updated
         //_inv.RegisterOnChangedCallback(OnInventoryChanged);
