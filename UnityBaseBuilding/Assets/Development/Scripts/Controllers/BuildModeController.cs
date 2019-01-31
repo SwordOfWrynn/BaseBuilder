@@ -43,16 +43,22 @@ public class BuildModeController : MonoBehaviour {
                 //this uses a lambda(_t, installedObjectType, "(theJob) => { WorldController.Instance.World.PlaceInstalledObject(buildModeObjectType, theJob.Tile);})"
                 //it is a mini function used for the Job callback (because the callback wants an Action<Job>), and it call the PlaceInstalledObject function
 
-                Job j = new Job(_t, installedObjectType, (theJob) =>
+                Job j;
+
+                if (WorldController.Instance.world.installedObjectJobPrototypes.ContainsKey(installedObjectType))
                 {
-                    WorldController.Instance.world.PlaceInstalledObject(installedObjectType, theJob.Tile);
-                    _t.pendingInstalledObjectJob = null;
-                },
-                    0.1f, null
-                );
+                    //Make a clone of the job prototype, and assign the correct tile
+                    j = WorldController.Instance.world.installedObjectJobPrototypes[installedObjectType].Clone();
+                    j.tile = _t;
+                }
+                else
+                {
+                    Debug.LogErrorFormat("There is no InstalledObject job prototype for {0}. Using the testing default", installedObjectType);
+                    j = new Job(_t, installedObjectType, InstalledObjectActions.JobCompleteInstalledObjectBuild, 0.1f, null);
+                }
 
                 _t.pendingInstalledObjectJob = j;
-                j.RegisterJobCancelCallback((theJob) => { theJob.Tile.pendingInstalledObjectJob = null; });
+                j.RegisterJobCancelCallback((theJob) => { theJob.tile.pendingInstalledObjectJob = null; });
 
                 //Queue up the job
                 WorldController.Instance.world.jobQueue.Enqueue(j);

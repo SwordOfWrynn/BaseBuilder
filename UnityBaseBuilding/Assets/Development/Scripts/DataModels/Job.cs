@@ -7,7 +7,7 @@ public class Job {
     //this class will hold info for a queued up job, which can include things like placing InstalledObjects,
     //moving inventory, working at a dest, and mabye fighting enemies.
 
-    public Tile Tile { get; protected set; }
+    public Tile tile;
     float jobTime;
 
     public string jobObjectType { get; protected set; }
@@ -19,8 +19,9 @@ public class Job {
     
     public Job(Tile _tile, string _jobObjectType, Action<Job> _cbJobComplete, float _jobTime, Inventory[] _inventoryRequirments)
     {
-        Tile = _tile;
+        tile = _tile;
         cbJobComplete += _cbJobComplete;
+        //cbJobCancelled += _cbJobCancelled;
         jobObjectType = _jobObjectType;
         jobTime = _jobTime;
 
@@ -32,6 +33,29 @@ public class Job {
                 inventoryRequirments[inv.objectType] = inv.Clone();
             }
         }
+    }
+
+    protected Job(Job _other)
+    {
+        tile = _other.tile;
+        cbJobComplete = _other.cbJobComplete;
+        //cbJobCancelled = _other.cbJobCancelled;
+        jobObjectType = _other.jobObjectType;
+        jobTime = _other.jobTime;
+
+        inventoryRequirments = new Dictionary<string, Inventory>();
+        if (_other.inventoryRequirments != null) //if no material is needed, null will be passed in for requirments
+        {
+            foreach (Inventory inv in _other.inventoryRequirments.Values)
+            {
+                inventoryRequirments[inv.objectType] = inv.Clone();
+            }
+        }
+    }
+
+    virtual public Job Clone()
+    {
+        return new Job(this);
     }
 
     public void DoWork(float _workTime)

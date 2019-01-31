@@ -67,7 +67,7 @@ public class Character : IXmlSerializable{
             //if I got a job
             if (myJob != null)
             {
-                destinationTile = myJob.Tile;
+                destinationTile = myJob.tile;
 
                 myJob.RegisterJobCancelCallback(OnJobEnded);
                 myJob.RegisterJobCompleteCallback(OnJobEnded);
@@ -75,7 +75,7 @@ public class Character : IXmlSerializable{
         }
 
         //if we are already there
-        if (myJob != null && currentTile == myJob.Tile)
+        if (myJob != null && currentTile == myJob.tile)
         {
             myJob.DoWork(_deltaTime);
         }

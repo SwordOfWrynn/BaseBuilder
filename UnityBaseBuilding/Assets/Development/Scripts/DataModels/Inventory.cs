@@ -18,6 +18,12 @@ public class Inventory {
     {
 
     }
+    public Inventory(string _objectType, int _maxStackSize, int stacksize)
+    {
+        objectType = _objectType;
+        maxStackSize = _maxStackSize;
+        stacksize = _maxStackSize;
+    }
 
     protected Inventory(Inventory _other)
     {

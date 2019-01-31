@@ -19,6 +19,8 @@ public class World : IXmlSerializable
 
     //when we pass this a string it will give the corresponding InstalledObject, or visa-versa
     Dictionary<string, InstalledObject> installedObjectPrototypes;
+    //Will have data on Installed Objects costs and build times ans such
+    public Dictionary<string, Job> installedObjectJobPrototypes;
 
     public int Width { get; protected set; }
 
@@ -122,8 +124,15 @@ public class World : IXmlSerializable
     protected void CreateInstalledObjectPrototypes()
     {
         installedObjectPrototypes = new Dictionary<string, InstalledObject>();
+        installedObjectJobPrototypes = new Dictionary<string, Job>();
+
+        //Wall
         installedObjectPrototypes.Add("Wall", new InstalledObject("Wall", 0, 1, 1, true, true)); //The order is name (Wall), move cost(0, which is impassable), width(1), height(1), if it links to neighbors(yes), if it can enclose a room(yes)
 
+        installedObjectJobPrototypes.Add("Wall", 
+            new Job(null, "Wall", InstalledObjectActions.JobCompleteInstalledObjectBuild, 1f, new Inventory[] { new Inventory("Steel Plate", 5, 0) }));
+
+        //Door
         installedObjectPrototypes.Add("Door", new InstalledObject("Door", 1, 1, 1, false, true)); //The order is name(Door), move cost(1, which is the normal speed), width(1), height(1), if it links to neighbors(No), if it can enclose a room(yes)
 
         installedObjectPrototypes["Door"].SetParameter("openness", 0);

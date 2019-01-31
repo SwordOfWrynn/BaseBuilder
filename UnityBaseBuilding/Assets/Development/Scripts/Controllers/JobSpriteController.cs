@@ -30,8 +30,8 @@ public class JobSpriteController : MonoBehaviour {
         //add the Object/GameObject pair to dictionary
         jobGameObjectMap.Add(_job, job_GO);
 
-        job_GO.name = "JOB_" + _job.jobObjectType + "_" + _job.Tile.X + "," + _job.Tile.Y;
-        job_GO.transform.position = new Vector3(_job.Tile.X, _job.Tile.Y, 0);
+        job_GO.name = "JOB_" + _job.jobObjectType + "_" + _job.tile.X + "," + _job.tile.Y;
+        job_GO.transform.position = new Vector3(_job.tile.X, _job.tile.Y, 0);
         job_GO.transform.SetParent(transform, true);
 
         //add a sprite renderer
@@ -46,8 +46,8 @@ public class JobSpriteController : MonoBehaviour {
         {
             //By default, door graphic is made for walls to east/west, let check to see if there are walls north/south, and if so, rotate the GO
 
-            Tile northTile = _job.Tile.World.GetTileAt(_job.Tile.X, _job.Tile.Y + 1);
-            Tile southTile = _job.Tile.World.GetTileAt(_job.Tile.X, _job.Tile.Y - 1);
+            Tile northTile = _job.tile.World.GetTileAt(_job.tile.X, _job.tile.Y + 1);
+            Tile southTile = _job.tile.World.GetTileAt(_job.tile.X, _job.tile.Y - 1);
             if (northTile != null && southTile != null && northTile.InstalledObject != null && southTile.InstalledObject != null
                 && northTile.InstalledObject.ObjectType == "Wall" && southTile.InstalledObject.ObjectType == "Wall")
             {

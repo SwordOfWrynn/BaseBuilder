@@ -41,4 +41,10 @@ public static class InstalledObjectActions {
         return ENTERABILITY.Soon;
     }
 
+    public static void JobCompleteInstalledObjectBuild(Job _theJob)
+    {
+        WorldController.Instance.world.PlaceInstalledObject(_theJob.jobObjectType, _theJob.tile);
+        _theJob.tile.pendingInstalledObjectJob = null;
+    }
+
 }
