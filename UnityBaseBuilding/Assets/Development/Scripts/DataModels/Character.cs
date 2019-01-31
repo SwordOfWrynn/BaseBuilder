@@ -20,7 +20,20 @@ public class Character : IXmlSerializable{
     {
         get; protected set;
     }
-    Tile destinationTile; //If we aren't moving, will equal current tile
+    //If we aren't moving, will equal current tile
+    Tile destinationTile
+    {
+        get;
+        set
+        {
+            if(destinationTile != value)
+            {
+                destinationTile = value;
+                pathAStar = null; //If it is a new destination we need to make a new path
+            }
+        }
+    }
+
     Tile nextTile; //the next tile in the pathfinding sequence
     Path_AStar pathAStar;
     float movementPercentage; //goes from 0 to 1  as we move between the 2 tiles
@@ -30,6 +43,8 @@ public class Character : IXmlSerializable{
     Action<Character> cbCharacterChanged;
 
     Job myJob;
+
+    Inventory myInventory; //The item we are carrying, not equipment or something
 
     public Character()
     {
@@ -61,24 +76,64 @@ public class Character : IXmlSerializable{
         //Do I have a job?
         if (myJob == null)
         {
-            //Get a new job
-            myJob = currentTile.World.jobQueue.Dequeue();
+            GetNewJob();
 
-            //if I got a job
-            if (myJob != null)
+            //if the queue has no jobs for us, so return
+            if (myJob == null)
             {
-                destinationTile = myJob.tile;
-
-                myJob.RegisterJobCancelCallback(OnJobEnded);
-                myJob.RegisterJobCompleteCallback(OnJobEnded);
+                destinationTile = currentTile;
+                return;
             }
         }
+        //We have a job and it is reachable
+
+        //Does the job have all of its materials?
+        if (myJob.HasAllMaterial() == false)
+        {
+            //No, it doesn't have all the materials, Are we carring the needed materials?
+            //If not, are we carrying materials that we need to drop?
+            if(myInventory != null)
+            {
+                if (myJob.NeedsInventoryType(myInventory))
+                {
+                    //if we are, deliver the materials at the job tile
+
+                    if(currentTile == destinationTile)
+                    {
+                        //We are at the job's tile, drop the inventory
+                        currentTile.World.inventoryManager.PlaceInventory(myJob, myInventory);
+                        //are we still carrying things?
+                        if (myInventory.stackSize == 0)
+                            myInventory = null;
+                        else
+                        {
+                            Debug.LogError("Character still carrying inventory. Setting it to null, but we are leaking inventory");
+                            myInventory = null;
+                        }
+
+                    }
+                    else //we still need to walk to the job
+                        destinationTile = myJob.tile;
+                }
+            }
+
+            //if not, go to a tile that has the needed materials
+            //if we are there pick up the materials
+
+            return; //we won't continue until all the materials are ready
+        }
+        //the job has all of the needed materials
+        //make sure our destination tile is the job's tile
+        destinationTile = myJob.tile;
 
         //if we are already there
-        if (myJob != null && currentTile == myJob.tile)
+        if (currentTile == myJob.tile)
         {
+            //job DoWork is mostly a countdown, that will call the job completed when finished
             myJob.DoWork(_deltaTime);
         }
+
+        //nothing left to do, Update_DoMovement will handle moving to destinations
     }
 
     void Update_DoMovement(float _deltaTime)
@@ -101,7 +156,6 @@ public class Character : IXmlSerializable{
                 {
                     Debug.LogError("Character -- Update_DoMovement: Path_AStar returned no path to destination");
                     AbandonJob();
-                    pathAStar = null;
                     return;
                 }
                 //ignore the first tile, it is what we're on
@@ -160,6 +214,25 @@ public class Character : IXmlSerializable{
             movementPercentage = 0;
         }
     }
+
+    void GetNewJob() {
+        myJob = currentTile.World.jobQueue.Dequeue();
+
+        destinationTile = myJob.tile;
+        myJob.RegisterJobCancelCallback(OnJobEnded);
+        myJob.RegisterJobCompleteCallback(OnJobEnded);
+
+        //check to see if final job tile is reachable
+        //generate a path to check
+        pathAStar = new Path_AStar(currentTile.World, currentTile, destinationTile); //calculate a path from the current tile to the destination tile
+        if (pathAStar.Length() == 0)
+        {
+            Debug.LogError("Character -- Update_DoMovement: Path_AStar returned no path to target job");
+            AbandonJob();
+            destinationTile = currentTile;
+        }
+
+    }
     
     public void SetDestination(Tile _tile)
     {
@@ -175,7 +248,6 @@ public class Character : IXmlSerializable{
     public void AbandonJob()
     {
         nextTile = destinationTile = currentTile;
-        pathAStar = null;
         currentTile.World.jobQueue.Enqueue(myJob);
         myJob = null;
     }

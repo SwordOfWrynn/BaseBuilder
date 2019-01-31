@@ -15,7 +15,7 @@ public class Job {
     Action<Job> cbJobComplete;
     Action<Job> cbJobCancelled;
 
-    Dictionary<string, Inventory> inventoryRequirments; //the max stack size of inventory in this dictionary is the required amount
+    public Dictionary<string, Inventory> inventoryRequirments; //the max stack size of inventory in this dictionary is the required amount
     
     public Job(Tile _tile, string _jobObjectType, Action<Job> _cbJobComplete, float _jobTime, Inventory[] _inventoryRequirments)
     {
@@ -77,6 +77,30 @@ public class Job {
         {
             cbJobCancelled(this);
         }
+    }
+
+    public bool HasAllMaterial()
+    {
+        foreach(Inventory inv in inventoryRequirments.Values)
+        {
+            if (inv.maxStackSize > inv.stackSize)
+                return false;
+        }
+        return true;
+    }
+
+    public bool NeedsInventoryType(Inventory inv)
+    {
+        if(inventoryRequirments.ContainsKey(inv.objectType) == false){
+            //We don't want this
+            return false;
+        }
+        if(inventoryRequirments[inv.objectType].stackSize >= inventoryRequirments[inv.objectType].maxStackSize){
+            //We already have enough
+            return false;
+        }
+        //we want it and need more
+        return true;
     }
 
     public void RegisterJobCompleteCallback(Action<Job> _cb)
