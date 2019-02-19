@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,7 +10,21 @@ public class Inventory {
     public string objectType = "Steel Plate";
 
     public int maxStackSize = 50;
-    public int stackSize;
+    protected int stackSize;
+    public int StackSize
+    {
+        get { return stackSize; }
+        set { if(stackSize != value)
+            {
+                stackSize = value;
+                if(cbInventoryChanged != null)
+                {
+                    cbInventoryChanged(this);
+                }
+            } }
+    }
+
+    Action<Inventory> cbInventoryChanged;
 
     public Tile tile;
     public Character character;
@@ -29,7 +44,7 @@ public class Inventory {
     {
         objectType = _other.objectType;
         maxStackSize = _other.maxStackSize;
-        stackSize = _other.stackSize;
+        StackSize = _other.StackSize;
     }
 
     public virtual Inventory Clone()
@@ -37,4 +52,12 @@ public class Inventory {
         return new Inventory(this);
     }
 
+    public void RegisterInventoryChangedCallback(Action<Inventory> callback)
+    {
+        cbInventoryChanged += callback;
+    }
+    public void UnRegisterInventoryChangedCallback(Action<Inventory> callback)
+    {
+        cbInventoryChanged -= callback;
+    }
 }

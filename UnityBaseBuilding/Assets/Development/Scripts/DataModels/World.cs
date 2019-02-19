@@ -392,14 +392,14 @@ public class World : IXmlSerializable
 
         //Debugging only
         Inventory inv = new Inventory();
-        inv.stackSize = 50;
+        inv.StackSize = 8;
         Tile t = GetTileAt(Width / 2, Height / 2);
         inventoryManager.PlaceInventory(t, inv);
         if (cbInventoryCreated != null)
             cbInventoryCreated(t.Inventory);
 
         inv = new Inventory();
-        inv.stackSize = 23;
+        inv.StackSize = 6;
         t = GetTileAt(Width / 2 + 2, Height / 2);
         inventoryManager.PlaceInventory(t, inv);
         if (cbInventoryCreated != null)

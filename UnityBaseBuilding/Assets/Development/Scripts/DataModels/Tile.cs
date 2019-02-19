@@ -42,7 +42,7 @@ public class Tile : IXmlSerializable{
     }
 
 
-    public Inventory Inventory { get; protected set; }
+    public Inventory Inventory { get; /*protected*/ set; }
 
     public Room room;
 
@@ -122,13 +122,13 @@ public class Tile : IXmlSerializable{
                 return false;
             }
 
-            int amoutToMove = _inv.stackSize;
-            if(Inventory.stackSize + amoutToMove > Inventory.maxStackSize)
+            int amoutToMove = _inv.StackSize;
+            if(Inventory.StackSize + amoutToMove > Inventory.maxStackSize)
             {
-                amoutToMove = Inventory.maxStackSize - _inv.stackSize;
+                amoutToMove = Inventory.maxStackSize - _inv.StackSize;
             }
-            Inventory.stackSize += amoutToMove;
-            _inv.stackSize -= amoutToMove;
+            Inventory.StackSize += amoutToMove;
+            _inv.StackSize -= amoutToMove;
 
             return true;
 
@@ -138,7 +138,7 @@ public class Tile : IXmlSerializable{
 
         Inventory = _inv.Clone();
         Inventory.tile = this;
-        _inv.stackSize = 0;
+        _inv.StackSize = 0;
 
         return true;
     }

@@ -21,9 +21,10 @@ public class Character : IXmlSerializable{
         get; protected set;
     }
     //If we aren't moving, will equal current tile
-    Tile destinationTile
+    Tile destinationTile;
+    Tile DestinationTile
     {
-        get;
+        get { return destinationTile; }
         set
         {
             if(destinationTile != value)
@@ -44,7 +45,7 @@ public class Character : IXmlSerializable{
 
     Job myJob;
 
-    Inventory myInventory; //The item we are carrying, not equipment or something
+    public Inventory inventory; //The item we are carrying, not equipment or something
 
     public Character()
     {
@@ -53,7 +54,7 @@ public class Character : IXmlSerializable{
 
     public Character(Tile _tile)
     {
-        currentTile = destinationTile = nextTile = _tile; //set both currentTile and destinationTile equal to _tile
+        currentTile = DestinationTile = nextTile = _tile; //set both currentTile and destinationTile equal to _tile
     }
 
     //This will allow us to control our own time, instead of using default Update. So we can make the game run faster or slower
@@ -81,7 +82,7 @@ public class Character : IXmlSerializable{
             //if the queue has no jobs for us, so return
             if (myJob == null)
             {
-                destinationTile = currentTile;
+                DestinationTile = currentTile;
                 return;
             }
         }
@@ -92,39 +93,82 @@ public class Character : IXmlSerializable{
         {
             //No, it doesn't have all the materials, Are we carring the needed materials?
             //If not, are we carrying materials that we need to drop?
-            if(myInventory != null)
+            if (inventory != null)
             {
-                if (myJob.NeedsInventoryType(myInventory))
+                if (myJob.NeedsInventoryType(inventory) > 0)
                 {
                     //if we are, deliver the materials at the job tile
 
-                    if(currentTile == destinationTile)
+                    if (currentTile == DestinationTile)
                     {
                         //We are at the job's tile, drop the inventory
-                        currentTile.World.inventoryManager.PlaceInventory(myJob, myInventory);
+                        currentTile.World.inventoryManager.PlaceInventory(myJob, inventory);
                         //are we still carrying things?
-                        if (myInventory.stackSize == 0)
-                            myInventory = null;
+                        if (inventory.StackSize == 0)
+                            inventory = null;
                         else
                         {
                             Debug.LogError("Character still carrying inventory. Setting it to null, but we are leaking inventory");
-                            myInventory = null;
+                            inventory = null;
                         }
 
                     }
-                    else //we still need to walk to the job
-                        destinationTile = myJob.tile;
+                    else
+                    { //we still need to walk to the job
+                        DestinationTile = myJob.tile;
+                        return;
+                    }
+                }
+                else
+                {
+                    //we are carring inventory that the job does not need, so we need to drop it
+                    if (currentTile.World.inventoryManager.PlaceInventory(currentTile, inventory) == false)
+                    {
+                        //At some point, implement finding nearest valid tile to dump, but for now just set null
+                        Debug.LogError("Character tried to dump inventory in invalid tile! setting character inventory to null");
+                        inventory = null;
+                    }
+                }
+            }
+            else
+            {
+                //At this point, the job still requires inventory, but we don't have what is needed
+
+                //Are we standing on a tile with what we need?
+                if (currentTile.Inventory != null && myJob.NeedsInventoryType(currentTile.Inventory) > 0)
+                {
+                    //pick up the inventory
+                    currentTile.World.inventoryManager.PlaceInventory(this, currentTile.Inventory, myJob.NeedsInventoryType(currentTile.Inventory));
+
+                }
+
+                else
+                {
+                    //Find first material the job needs
+                    Inventory desired = myJob.GetFirstNeededInventory();
+
+                    Inventory supplier = currentTile.World.inventoryManager.GetClosestInventoryOfType(
+                        desired.objectType, currentTile, desired.maxStackSize - desired.StackSize);
+
+                    if (supplier == null)
+                    {
+                        Debug.LogFormat("No tile contains objects of type '{0}' to satisfied job requirments. Abandoning Job.", desired.objectType);
+                        AbandonJob();
+                        return;
+                    }
+
+                    DestinationTile = supplier.tile;
+
+                    return;
                 }
             }
 
-            //if not, go to a tile that has the needed materials
-            //if we are there pick up the materials
 
             return; //we won't continue until all the materials are ready
         }
         //the job has all of the needed materials
         //make sure our destination tile is the job's tile
-        destinationTile = myJob.tile;
+        DestinationTile = myJob.tile;
 
         //if we are already there
         if (currentTile == myJob.tile)
@@ -139,7 +183,7 @@ public class Character : IXmlSerializable{
     void Update_DoMovement(float _deltaTime)
     {
         //if we don't need to move, don't move, we're already here
-        if (currentTile == destinationTile)
+        if (currentTile == DestinationTile)
         {
             pathAStar = null;
             return;
@@ -151,7 +195,7 @@ public class Character : IXmlSerializable{
             if(pathAStar == null || pathAStar.Length() == 0)
             {
                 //generate a path
-                pathAStar = new Path_AStar(currentTile.World, currentTile, destinationTile); //calculate a path from the current tile to the destination tile
+                pathAStar = new Path_AStar(currentTile.World, currentTile, DestinationTile); //calculate a path from the current tile to the destination tile
                 if(pathAStar.Length()==0)
                 {
                     Debug.LogError("Character -- Update_DoMovement: Path_AStar returned no path to destination");
@@ -218,18 +262,21 @@ public class Character : IXmlSerializable{
     void GetNewJob() {
         myJob = currentTile.World.jobQueue.Dequeue();
 
-        destinationTile = myJob.tile;
+        if (myJob == null)
+            return;
+
+        DestinationTile = myJob.tile;
         myJob.RegisterJobCancelCallback(OnJobEnded);
         myJob.RegisterJobCompleteCallback(OnJobEnded);
 
         //check to see if final job tile is reachable
         //generate a path to check
-        pathAStar = new Path_AStar(currentTile.World, currentTile, destinationTile); //calculate a path from the current tile to the destination tile
+        pathAStar = new Path_AStar(currentTile.World, currentTile, DestinationTile); //calculate a path from the current tile to the destination tile
         if (pathAStar.Length() == 0)
         {
             Debug.LogError("Character -- Update_DoMovement: Path_AStar returned no path to target job");
             AbandonJob();
-            destinationTile = currentTile;
+            DestinationTile = currentTile;
         }
 
     }
@@ -241,13 +288,13 @@ public class Character : IXmlSerializable{
             Debug.Log("Character -- SetDestination: The destinationTile is not adjacent to the currentTile!");
         }
 
-        destinationTile = _tile;
+        DestinationTile = _tile;
 
     }
     //stop pathfinding and put job back in queue
     public void AbandonJob()
     {
-        nextTile = destinationTile = currentTile;
+        nextTile = DestinationTile = currentTile;
         currentTile.World.jobQueue.Enqueue(myJob);
         myJob = null;
     }

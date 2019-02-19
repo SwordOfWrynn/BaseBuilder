@@ -65,15 +65,16 @@ public class InventorySpriteController : MonoBehaviour{
             GameObject ui_GO = Instantiate(inventoryUIPrefab);
             ui_GO.transform.SetParent(inv_GO.transform);
             ui_GO.transform.localPosition = Vector3.zero;
-            ui_GO.GetComponentInChildren<Text>().text = _inv.stackSize.ToString();
+            ui_GO.GetComponentInChildren<Text>().text = _inv.StackSize.ToString();
         }
 
         //register callback so our GameObject gets updated
-        //_inv.RegisterOnChangedCallback(OnInventoryChanged);
+        _inv.RegisterInventoryChangedCallback(OnInventoryChanged);
     }
 
     void OnInventoryChanged(Inventory _inv)
     {
+
 
         if (inventoryGameObjectMap.ContainsKey(_inv) == false)
         {
@@ -82,9 +83,22 @@ public class InventorySpriteController : MonoBehaviour{
         }
 
         GameObject inventory_GO = inventoryGameObjectMap[_inv];
-       //inventory_GO.GetComponent<SpriteRenderer>().sprite = GetSpriteForInstalledObject(_character);
 
-        inventory_GO.transform.position = new Vector3(_inv.tile.X, _inv.tile.Y, 0);
+        if (_inv.StackSize > 0)
+        {
+            inventory_GO.transform.position = new Vector3(_inv.tile.X, _inv.tile.Y, 0);
+
+            Text t = inventory_GO.GetComponentInChildren<Text>();
+            if (t != null)
+                t.text = _inv.StackSize.ToString();
+        }
+        else
+        {
+            //the stack is equal to 0, so remove the sprite
+            inventoryGameObjectMap.Remove(_inv);
+            _inv.UnRegisterInventoryChangedCallback(OnInventoryChanged);
+            Destroy(inventory_GO);
+        }
     }
 
 }

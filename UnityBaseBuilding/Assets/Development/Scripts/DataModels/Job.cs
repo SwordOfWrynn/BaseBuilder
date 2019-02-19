@@ -83,24 +83,24 @@ public class Job {
     {
         foreach(Inventory inv in inventoryRequirments.Values)
         {
-            if (inv.maxStackSize > inv.stackSize)
+            if (inv.maxStackSize > inv.StackSize)
                 return false;
         }
         return true;
     }
 
-    public bool NeedsInventoryType(Inventory inv)
+    public int NeedsInventoryType(Inventory inv)
     {
         if(inventoryRequirments.ContainsKey(inv.objectType) == false){
             //We don't want this
-            return false;
+            return 0;
         }
-        if(inventoryRequirments[inv.objectType].stackSize >= inventoryRequirments[inv.objectType].maxStackSize){
+        if(inventoryRequirments[inv.objectType].StackSize >= inventoryRequirments[inv.objectType].maxStackSize){
             //We already have enough
-            return false;
+            return 0;
         }
         //we want it and need more
-        return true;
+        return inventoryRequirments[inv.objectType].maxStackSize - inventoryRequirments[inv.objectType].StackSize;
     }
 
     public void RegisterJobCompleteCallback(Action<Job> _cb)
@@ -121,4 +121,14 @@ public class Job {
         cbJobCancelled -= _cb;
     }
 
+    public Inventory GetFirstNeededInventory()
+    {
+        foreach (Inventory inv in inventoryRequirments.Values)
+        {
+            if (inv.StackSize < inv.maxStackSize)
+                return inv;
+        }
+        //No more inventory is needed
+        return null;
+    }
 }
