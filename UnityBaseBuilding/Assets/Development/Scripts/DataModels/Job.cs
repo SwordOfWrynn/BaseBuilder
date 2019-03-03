@@ -8,7 +8,7 @@ public class Job {
     //moving inventory, working at a dest, and mabye fighting enemies.
 
     public Tile tile;
-    float jobTime;
+    public float jobTime { get; protected set; }
 
     public string jobObjectType { get; protected set; }
 

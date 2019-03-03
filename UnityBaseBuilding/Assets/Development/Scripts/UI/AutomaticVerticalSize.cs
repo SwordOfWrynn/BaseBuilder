@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[ExecuteInEditMode]
 public class AutomaticVerticalSize : MonoBehaviour
 {
 
@@ -8,6 +9,11 @@ public class AutomaticVerticalSize : MonoBehaviour
 
     // Use this for initialization
     void Start()
+    {
+        AdjustSize();
+    }
+
+    private void Update()
     {
         AdjustSize();
     }

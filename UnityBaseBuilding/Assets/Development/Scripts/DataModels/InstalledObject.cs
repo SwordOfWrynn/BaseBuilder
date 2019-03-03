@@ -40,10 +40,14 @@ public class InstalledObject : IXmlSerializable {
     //Func is like an action, but will return something, in this case a boolean
     Func<Tile, bool> funcPositionValidation;
 
+    //Job for this object, like repairing it, or creating items on it
+    List<Job> jobs;
+
     public InstalledObject()
     {
         //Empty constructor used for Xml serialization
         inObjParameters = new Dictionary<string, float>();
+        jobs = new List<Job>();
     }
 
     //copy constructor, Don't call this directly, unless we never do subclassing, instead use Clone(), which is more virtual
@@ -57,6 +61,7 @@ public class InstalledObject : IXmlSerializable {
         LinksToNeighbour = _other.LinksToNeighbour;
 
         inObjParameters = new Dictionary<string, float>(_other.inObjParameters);
+        jobs = new List<Job>();
 
         if(_other.updateActions != null)
             updateActions = (Action<InstalledObject, float>)_other.updateActions.Clone();
@@ -218,6 +223,32 @@ public class InstalledObject : IXmlSerializable {
     public void UnregisterUpdateAction(Action<InstalledObject, float> _action)
     {
         updateActions -= _action;
+    }
+
+    public int JobCount()
+    {
+        return jobs.Count;
+    }
+
+    public void AddJob(Job _j)
+    {
+        jobs.Add(_j);
+        Tile.World.jobQueue.Enqueue(_j);
+    }
+
+    public void RemoveJob(Job _j)
+    {
+        jobs.Remove(_j);
+        Tile.World.jobQueue.Remove(_j);
+    }
+
+    public void ClearJobs()
+    {
+        foreach(Job j in jobs)
+        {
+            Tile.World.jobQueue.Remove(j);
+        }
+        jobs.Clear();
     }
 
     public XmlSchema GetSchema()

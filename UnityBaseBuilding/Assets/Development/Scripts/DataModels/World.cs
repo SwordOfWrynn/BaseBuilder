@@ -127,19 +127,30 @@ public class World : IXmlSerializable
         installedObjectJobPrototypes = new Dictionary<string, Job>();
 
         //Wall
-        installedObjectPrototypes.Add("Wall", new InstalledObject("Wall", 0, 1, 1, true, true)); //The order is name (Wall), move cost(0, which is impassable), width(1), height(1), if it links to neighbors(yes), if it can enclose a room(yes)
+        installedObjectPrototypes.Add("Wall",
+            new InstalledObject("Wall", 0, 1, 1, true, true)); //The order is name (Wall), move cost(0, which is impassable), width(1), height(1), if it links to neighbors(yes), if it can enclose a room(yes)
 
         installedObjectJobPrototypes.Add("Wall", 
             new Job(null, "Wall", InstalledObjectActions.JobCompleteInstalledObjectBuild, 1f, new Inventory[] { new Inventory("Steel Plate", 5, 0) }));
 
         //Door
-        installedObjectPrototypes.Add("Door", new InstalledObject("Door", 1, 1, 1, false, true)); //The order is name(Door), move cost(1, which is the normal speed), width(1), height(1), if it links to neighbors(No), if it can enclose a room(yes)
+        installedObjectPrototypes.Add("Door", 
+            new InstalledObject("Door", 1, 1, 1, false, true)); //The order is name(Door), move cost(1, which is the normal speed), width(1), height(1), if it links to neighbors(No), if it can enclose a room(yes)
 
         installedObjectPrototypes["Door"].SetParameter("openness", 0);
         installedObjectPrototypes["Door"].SetParameter("is_opening", 0);
         installedObjectPrototypes["Door"].RegisterUpdateAction(InstalledObjectActions.Door_UpdateAction);
 
         installedObjectPrototypes["Door"].isEnterable = InstalledObjectActions.Door_IsEnterable;
+
+        //Stockpile
+        installedObjectPrototypes.Add("Stockpile",
+            new InstalledObject("Stockpile", 1, 1, 1));
+
+        installedObjectJobPrototypes.Add("Stockpile",
+            new Job(null, "Stockpile", InstalledObjectActions.JobCompleteInstalledObjectBuild, -1, null));
+
+        installedObjectPrototypes["Stockpile"].RegisterUpdateAction(InstalledObjectActions.Stockpile_UpdateAction);
     }
 
     public void RandomizeTiles()
@@ -391,15 +402,15 @@ public class World : IXmlSerializable
         }
 
         //Debugging only
-        Inventory inv = new Inventory();
-        inv.StackSize = 8;
+        Inventory inv = new Inventory("Steel Plate", 50, 8);
+        //inv.StackSize = 8;
         Tile t = GetTileAt(Width / 2, Height / 2);
         inventoryManager.PlaceInventory(t, inv);
         if (cbInventoryCreated != null)
             cbInventoryCreated(t.Inventory);
 
-        inv = new Inventory();
-        inv.StackSize = 6;
+        inv = new Inventory("Steel Plate", 50, 12);
+        //inv.StackSize = 12;
         t = GetTileAt(Width / 2 + 2, Height / 2);
         inventoryManager.PlaceInventory(t, inv);
         if (cbInventoryCreated != null)

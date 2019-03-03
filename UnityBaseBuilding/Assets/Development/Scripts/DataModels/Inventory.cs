@@ -33,11 +33,11 @@ public class Inventory {
     {
 
     }
-    public Inventory(string _objectType, int _maxStackSize, int stacksize)
+    public Inventory(string _objectType, int _maxStackSize, int _stackSize)
     {
         objectType = _objectType;
         maxStackSize = _maxStackSize;
-        stacksize = _maxStackSize;
+        StackSize = _stackSize;
     }
 
     protected Inventory(Inventory _other)

@@ -18,6 +18,12 @@ public class JobSpriteController : MonoBehaviour {
 
     void OnJobCreated(Job _job)
     {
+        if(_job.jobObjectType == null)
+        {
+            //This job does not have a sprite, so dont render it
+            return;
+        }
+
 
         if (jobGameObjectMap.ContainsKey(_job))
         {
